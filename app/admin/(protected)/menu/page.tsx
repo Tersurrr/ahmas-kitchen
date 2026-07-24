@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { Category, MenuItem } from "@/lib/types";
 import { formatCurrency } from "@/lib/whatsapp";
 import { Plus, Pencil, Trash2, X, UploadCloud } from "lucide-react";
-import { compressImage } from "@/lib/client-media";
+import { compressImage, safeStorageName } from "@/lib/client-media";
 
 type OptionFormRow = {
   id?: string; // present when this option already exists in the DB
@@ -50,9 +50,9 @@ export default function AdminMenuPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const [itemsRes, categoriesRes] = await Promise.all([
       supabase
@@ -65,11 +65,11 @@ export default function AdminMenuPage() {
     setItems((itemsRes.data as unknown as MenuItem[]) || []);
     setCategories((categoriesRes.data as Category[]) || []);
     setLoading(false);
-  }
+  }, [supabase]);
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [load]);
 
   function openNew() {
     setForm(emptyForm);
@@ -149,7 +149,7 @@ export default function AdminMenuPage() {
     for (const file of Array.from(files)) {
       try {
         const optimizedFile = await compressImage(file);
-        const path = `${Date.now()}-${crypto.randomUUID()}-${optimizedFile.name}`;
+        const path = `${Date.now()}-${crypto.randomUUID()}-${safeStorageName(optimizedFile.name)}`;
         const { error: uploadError } = await supabase.storage.from("menu-images").upload(path, optimizedFile, {
           cacheControl: "31536000",
           contentType: optimizedFile.type,
@@ -183,8 +183,9 @@ export default function AdminMenuPage() {
       setError("Please enter a name for this item.");
       return;
     }
-    if (!form.price) {
-      setError("Please enter a price for this item.");
+    const itemPrice = Number(form.price);
+    if (!Number.isFinite(itemPrice) || itemPrice <= 0 || itemPrice > 1_000_000) {
+      setError("Please enter a valid price greater than zero.");
       return;
     }
     if (uploading) {
@@ -194,7 +195,12 @@ export default function AdminMenuPage() {
     const cleanedOptions = form.options
       .map((o) => ({ ...o, name: o.name.trim() }))
       .filter((o) => o.name || o.price);
-    if (cleanedOptions.some((o) => !o.name || !o.price || isNaN(parseFloat(o.price)))) {
+    if (
+      cleanedOptions.some((o) => {
+        const price = Number(o.price);
+        return !o.name || !Number.isFinite(price) || price <= 0 || price > 1_000_000;
+      })
+    ) {
       setError("Each option needs a name and a valid price.");
       return;
     }
@@ -207,7 +213,7 @@ export default function AdminMenuPage() {
         name: form.name,
         description: form.description || null,
         ingredients: form.ingredients || null,
-        price: parseFloat(form.price),
+        price: itemPrice,
         category_id: form.category_id || null,
         is_featured: form.is_featured,
         is_available: form.is_available,
@@ -253,7 +259,7 @@ export default function AdminMenuPage() {
             cleanedOptions.map((o, i) => ({
               menu_item_id: itemId,
               name: o.name,
-              price: parseFloat(o.price),
+              price: Number(o.price),
               sort_order: i,
               is_default: hasDefault ? o.is_default : i === 0,
             }))
@@ -319,7 +325,7 @@ export default function AdminMenuPage() {
             <div key={item.id} className="bg-white rounded-xl shadow-soft overflow-hidden">
               <div className="relative aspect-video bg-surface-container-high">
                 {item.menu_images?.[0] && (
-                  <Image src={item.menu_images[0].url} alt={item.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                  <Image src={item.menu_images[0].url} alt={`Menu photo of ${item.name}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 )}
                 {!item.is_available && (
                   <span className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
@@ -334,7 +340,7 @@ export default function AdminMenuPage() {
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-primary">{item.name}</h3>
+                  <h2 className="font-semibold text-primary">{item.name}</h2>
                   <span className="text-sm font-semibold">
                     {formatCurrency(
                       item.menu_item_options && item.menu_item_options.length > 0
@@ -524,9 +530,9 @@ export default function AdminMenuPage() {
                   Images
                 </label>
                 <div className="flex flex-wrap gap-3 mb-3">
-                  {form.images.map((url) => (
+                  {form.images.map((url, index) => (
                     <div key={url} className="relative w-20 h-20 rounded-lg overflow-hidden border border-outline-variant/30">
-                      <Image src={url} alt="" fill sizes="80px" className="object-cover" />
+                      <Image src={url} alt={`Preview of uploaded menu image ${index + 1}`} fill sizes="80px" className="object-cover" />
                       <button
                         onClick={() => removeImage(url)}
                         className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"

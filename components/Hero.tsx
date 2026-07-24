@@ -22,9 +22,9 @@ export default function Hero() {
             <Image
               src="/images/amahs-kitchen-logo.webp"
               alt="Amahs Kitchen logo"
-              width={56}
-              height={56}
-              className="h-10 w-10 shrink-0 rounded-full object-cover sm:h-14 sm:w-14"
+              width={128}
+              height={128}
+              className="h-12 w-12 shrink-0 rounded-full object-cover sm:h-20 sm:w-20 md:h-28 md:w-28 lg:h-32 lg:w-32"
             />
             <p className="whitespace-nowrap font-brand text-5xl font-semibold leading-none tracking-wide text-[#C9A227] drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:text-8xl md:text-9xl">
               Amahs Kitchen

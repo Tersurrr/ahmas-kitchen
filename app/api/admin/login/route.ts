@@ -1,7 +1,13 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
+
+type RateLimitResult = {
+  allowed: boolean;
+  retry_after: number;
+};
 
 function clientAddress(request: Request) {
   // Netlify and Vercel sanitize this header at their managed edge. Do not trust it when self-hosting.
@@ -16,8 +22,37 @@ function noStore(status: number, body: Record<string, unknown>, retryAfter?: num
   return NextResponse.json(body, { status, headers });
 }
 
+function hasSameOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: Request) {
-  const body: unknown = await request.json().catch(() => null);
+  const contentType = request.headers.get("content-type") || "";
+  const contentLength = Number(request.headers.get("content-length") || "0");
+  if (contentLength > 8_192) {
+    return noStore(413, { error: "Invalid sign-in request." });
+  }
+  if (!contentType.toLowerCase().startsWith("application/json")) {
+    return noStore(415, { error: "Invalid sign-in request." });
+  }
+  if (!hasSameOrigin(request)) return noStore(403, { error: "Invalid sign-in request." });
+
+  const raw = await request.text().catch(() => "");
+  if (Buffer.byteLength(raw, "utf8") > 8_192) {
+    return noStore(413, { error: "Invalid sign-in request." });
+  }
+  let body: unknown = null;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return noStore(400, { error: "Invalid sign-in request." });
+  }
   const credentials =
     body && typeof body === "object" ? (body as { email?: unknown; password?: unknown }) : {};
   const email = typeof credentials.email === "string" ? credentials.email.trim().toLowerCase() : "";
@@ -43,14 +78,27 @@ export async function POST(request: Request) {
 
   // Atomic, database-backed limiter. It applies independent email and IP buckets.
   // The IP bucket is enabled only on Netlify or Vercel, where x-forwarded-for is trusted.
-  const { data: limit, error: limitError } = await supabase.rpc(
-    "consume_admin_login_rate_limit",
-    { p_email: email, p_ip: clientAddress(request) }
-  );
-  const result = Array.isArray(limit) ? limit[0] : limit;
+  let limit: unknown;
+  let limitError: unknown;
+  try {
+    const result = await createAdminClient().rpc("consume_admin_login_rate_limit", {
+      p_email: email,
+      p_ip: clientAddress(request),
+    });
+    limit = result.data;
+    limitError = result.error;
+  } catch {
+    return noStore(503, { error: "Sign-in is temporarily unavailable. Please try again shortly." });
+  }
+  const result = (Array.isArray(limit) ? limit[0] : limit) as RateLimitResult | null;
 
   // Fail closed: a missing migration or unavailable limiter must not open the login endpoint.
-  if (limitError || !result) {
+  if (
+    limitError ||
+    !result ||
+    typeof result.allowed !== "boolean" ||
+    !Number.isFinite(result.retry_after)
+  ) {
     return noStore(503, { error: "Sign-in is temporarily unavailable. Please try again shortly." });
   }
 

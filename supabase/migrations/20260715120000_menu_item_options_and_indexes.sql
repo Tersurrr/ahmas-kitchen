@@ -17,19 +17,20 @@ create unique index if not exists menu_item_options_one_default_per_item
 
 alter table public.menu_item_options enable row level security;
 
--- Public (storefront) can read options for any item; only admins (service role /
--- authenticated via the existing admin session) can write. This mirrors the
--- existing policy shape used by menu_items/menu_images in this project.
+-- Public (storefront) can read options for any item. Admin writes are defined
+-- by the security-hardening migration, which checks the app_metadata role.
 drop policy if exists "menu_item_options_select_public" on public.menu_item_options;
 create policy "menu_item_options_select_public"
   on public.menu_item_options for select
   using (true);
 
 drop policy if exists "menu_item_options_write_authenticated" on public.menu_item_options;
-create policy "menu_item_options_write_authenticated"
+drop policy if exists "menu_item_options_write_admin" on public.menu_item_options;
+create policy "menu_item_options_write_admin"
   on public.menu_item_options for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
+  to authenticated
+  using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  with check ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 -- ---------------------------------------------------------------------------
 -- Indexes for frequently-filtered/joined columns (performance).

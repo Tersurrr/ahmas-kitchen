@@ -56,4 +56,5 @@ end;
 $$;
 
 revoke all on function public.consume_admin_login_rate_limit(text, text) from public;
-grant execute on function public.consume_admin_login_rate_limit(text, text) to anon, authenticated;
+revoke all on function public.consume_admin_login_rate_limit(text, text) from anon, authenticated;
+grant execute on function public.consume_admin_login_rate_limit(text, text) to service_role;

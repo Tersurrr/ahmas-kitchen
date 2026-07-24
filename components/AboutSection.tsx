@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Sparkles, Leaf, ChefHat, HeartHandshake, Check } from "lucide-react";
+import { siteConfig } from "@/lib/site-config";
 
 const checklist = [
   "Traditional African flavors, prepared with care",
@@ -24,7 +25,7 @@ export default function AboutSection() {
         <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-soft heritage-frame">
           <Image
             src="https://images.unsplash.com/photo-1583224964978-2257b960c3d3?q=80&w=1200&auto=format&fit=crop"
-            alt="Freshly prepared African dishes at Amahs kitchen"
+            alt="Freshly prepared African dishes served by Amahs Kitchen"
             fill
             quality={80}
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -40,7 +41,10 @@ export default function AboutSection() {
             </span>
           </h2>
           <p className="text-on-surface-variant leading-relaxed">
-            Amahs Kitchen is dedicated to sharing the rich taste of African cuisine through
+            {siteConfig.ownerName
+              ? `Founded and operated by ${siteConfig.ownerName}, Amahs Kitchen is dedicated`
+              : "Amahs Kitchen is dedicated"}{" "}
+            to sharing the rich taste of African cuisine through
             carefully prepared meals made with quality ingredients. Every dish reflects our
             commitment to freshness, consistency, and exceptional service. From everyday meals to
             special celebrations, we strive to create a memorable dining experience for every

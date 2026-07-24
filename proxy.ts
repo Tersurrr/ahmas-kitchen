@@ -4,6 +4,15 @@ import { NextResponse, type NextRequest } from "next/server";
 
 function contentSecurityPolicy(nonce: string) {
   const developmentEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+  let supabaseOrigin = "";
+  let supabaseWebSocketOrigin = "";
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "");
+    supabaseOrigin = ` ${url.origin}`;
+    supabaseWebSocketOrigin = ` wss://${url.host}`;
+  } catch {
+    // A missing configuration is handled by the data/auth clients.
+  }
 
   return [
     "default-src 'self'",
@@ -16,11 +25,11 @@ function contentSecurityPolicy(nonce: string) {
     // Framer Motion applies per-element transforms and opacity through style attributes.
     // This is narrower than allowing inline <style> blocks and keeps script execution strict.
     "style-src-attr 'unsafe-inline'",
-    "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com",
+    `img-src 'self' data: blob:${supabaseOrigin} https://images.unsplash.com`,
     // Uploaded kitchen videos are served directly from the existing Supabase Storage bucket.
-    "media-src 'self' blob: https://*.supabase.co",
+    `media-src 'self' blob:${supabaseOrigin}`,
     "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+    `connect-src 'self'${supabaseOrigin}${supabaseWebSocketOrigin}`,
   ].join("; ");
 }
 
@@ -32,16 +41,10 @@ export async function proxy(request: NextRequest) {
   // Pass the nonce to the renderer so Next can apply it to framework-generated tags.
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
-  // Do not accept client-supplied route markers used by the layout guard.
-  requestHeaders.delete("x-amahs-admin-login");
-  requestHeaders.delete("x-amahs-admin-protected");
-
   const path = request.nextUrl.pathname;
-  const isAdminRoute = path.startsWith("/admin") && path !== "/admin/login";
-  requestHeaders.set(
-    isAdminRoute ? "x-amahs-admin-protected" : "x-amahs-admin-login",
-    "1"
-  );
+  const isAdminPath = path === "/admin" || path.startsWith("/admin/");
+  const isLoginRoute = path === "/admin/login" || path === "/admin/login/";
+  const isAdminRoute = isAdminPath && !isLoginRoute;
 
   const nextResponse = () => {
     const response = NextResponse.next({ request: { headers: requestHeaders } });

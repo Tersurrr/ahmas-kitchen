@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Settings } from "@/lib/types";
 import { UploadCloud } from "lucide-react";
 import Image from "next/image";
+import { compressImage, safeStorageName } from "@/lib/client-media";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -12,8 +13,9 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     (async () => {
@@ -21,7 +23,7 @@ export default function AdminSettingsPage() {
       setSettings(data as Settings);
       setLoading(false);
     })();
-  }, []);
+  }, [supabase]);
 
   function update<K extends keyof Settings>(key: K, value: Settings[K]) {
     setSettings((s) => (s ? { ...s, [key]: value } : s));
@@ -30,20 +32,39 @@ export default function AdminSettingsPage() {
   async function handleLogoUpload(file: File | null) {
     if (!file || !settings) return;
     setUploadingLogo(true);
-    const path = `logo-${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("menu-images").upload(path, file, { upsert: false });
-    if (!error) {
+    setError("");
+    try {
+      const optimizedFile = await compressImage(file);
+      const path = `logo-${Date.now()}-${safeStorageName(optimizedFile.name)}`;
+      const { error: uploadError } = await supabase.storage
+        .from("menu-images")
+        .upload(path, optimizedFile, {
+          cacheControl: "31536000",
+          contentType: optimizedFile.type,
+          upsert: false,
+        });
+      if (uploadError) throw uploadError;
       const { data } = supabase.storage.from("menu-images").getPublicUrl(path);
       update("logo_url", data.publicUrl);
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error ? uploadError.message : "The logo could not be uploaded."
+      );
+    } finally {
+      setUploadingLogo(false);
     }
-    setUploadingLogo(false);
   }
 
   async function handleSave() {
     if (!settings) return;
     setSaving(true);
-    await supabase.from("settings").update(settings).eq("id", 1);
+    setError("");
+    const { error: saveError } = await supabase.from("settings").update(settings).eq("id", 1);
     setSaving(false);
+    if (saveError) {
+      setError(saveError.message || "The settings could not be saved.");
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -62,7 +83,7 @@ export default function AdminSettingsPage() {
           <label className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-2 block">Logo</label>
           {settings.logo_url && (
             <div className="relative w-20 h-20 rounded-lg overflow-hidden mb-2 border border-outline-variant/30">
-              <Image src={settings.logo_url} alt="Logo" fill sizes="80px" className="object-contain" />
+              <Image src={settings.logo_url} alt="Current Amahs Kitchen logo" fill sizes="80px" className="object-contain" />
             </div>
           )}
           <label className="flex items-center gap-2 justify-center border-2 border-dashed border-outline-variant rounded-lg py-4 cursor-pointer hover:bg-surface-container-low transition-colors text-sm text-on-surface-variant w-fit px-6">
@@ -89,6 +110,8 @@ export default function AdminSettingsPage() {
           <Field label="Facebook URL" value={settings.facebook_url || ""} onChange={(v) => update("facebook_url", v)} />
           <Field label="Instagram URL" value={settings.instagram_url || ""} onChange={(v) => update("instagram_url", v)} />
         </div>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
         <button
           onClick={handleSave}
@@ -119,6 +142,7 @@ function Field({
       <input
         type={type}
         value={value}
+        maxLength={type === "color" ? undefined : 500}
         onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
       />

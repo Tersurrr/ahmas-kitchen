@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category } from "@/lib/types";
 import { Plus, Pencil, Trash2, GripVertical, X } from "lucide-react";
@@ -12,18 +12,18 @@ export default function AdminCategoriesPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [name, setName] = useState("");
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase.from("categories").select("*").order("sort_order");
     setCategories((data as Category[]) || []);
     setLoading(false);
-  }
+  }, [supabase]);
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [load]);
 
   function openNew() {
     setEditing(null);

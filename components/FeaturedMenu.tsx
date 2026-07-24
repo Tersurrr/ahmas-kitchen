@@ -9,7 +9,7 @@ export default function FeaturedMenu({ items }: { items: MenuItem[] }) {
     <section className="py-section-gap px-4 md:px-gutter max-w-container-max mx-auto">
       <div className="flex items-center justify-between gap-4 mb-10">
         <div>
-          <span className="font-display text-3xl md:text-4xl font-bold text-primary">Featured</span>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-primary">Featured</h2>
         </div>
         <Link
           href="/menu"

@@ -36,9 +36,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h5 className="text-xs font-bold tracking-widest uppercase text-primary mb-5">
+            <h2 className="text-xs font-bold tracking-widest uppercase text-primary mb-5">
               Quick Links
-            </h5>
+            </h2>
             <ul className="space-y-3 text-sm">
               <li><Link href="/menu" className="text-on-surface-variant hover:text-secondary transition-colors">Menu</Link></li>
               <li><Link href="/videos" className="text-on-surface-variant hover:text-secondary transition-colors">Videos</Link></li>
@@ -51,9 +51,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h5 className="text-xs font-bold tracking-widest uppercase text-primary mb-5">
+            <h2 className="text-xs font-bold tracking-widest uppercase text-primary mb-5">
               Contact
-            </h5>
+            </h2>
             <ul className="space-y-3 text-sm">
               <li>
                 <a href={`mailto:${EMAIL}`} className="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors">
@@ -79,9 +79,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h5 className="text-xs font-bold tracking-widest uppercase text-primary mb-5">
+            <h2 className="text-xs font-bold tracking-widest uppercase text-primary mb-5">
               Hours
-            </h5>
+            </h2>
             <p className="text-sm text-on-surface-variant mb-2">Pickup: Tue–Sun, 11am – 7pm</p>
             <p className="text-sm text-on-surface-variant">Delivery: Tue–Sun, 12pm – 6pm</p>
           </div>

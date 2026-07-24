@@ -1,14 +1,30 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import type { Category, MenuItem, Video } from "@/lib/types";
 
 const supabaseConfigured =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+// Public menu and video reads do not need a user session. Keeping this client
+// cookie-free prevents a stale admin session from triggering an auth refresh
+// and hiding otherwise public Supabase content.
+const publicSupabase = supabaseConfigured
+  ? createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+        },
+      },
+    )
+  : null;
+
 export async function getCategories(): Promise<Category[]> {
-  if (!supabaseConfigured) return [];
+  if (!publicSupabase) return [];
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data, error } = await publicSupabase
       .from("categories")
       .select("*")
       .order("sort_order", { ascending: true });
@@ -20,10 +36,9 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getMenuItems(): Promise<MenuItem[]> {
-  if (!supabaseConfigured) return [];
+  if (!publicSupabase) return [];
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data, error } = await publicSupabase
       .from("menu_items")
       .select("*, menu_images(*), categories(*), menu_item_options(*)")
       .order("sort_order", { ascending: true })
@@ -42,10 +57,9 @@ export async function getFeaturedMenuItems(): Promise<MenuItem[]> {
 }
 
 export async function getVideos(): Promise<Video[]> {
-  if (!supabaseConfigured) return [];
+  if (!publicSupabase) return [];
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data, error } = await publicSupabase
       .from("videos")
       .select("*")
       .order("sort_order", { ascending: true });

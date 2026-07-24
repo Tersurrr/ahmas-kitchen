@@ -6,7 +6,7 @@ import { Menu, X, ShoppingBag } from "lucide-react";
 import { useCart } from "@/store/cart";
 
 const links = [
-  { href: "/#home", label: "Home" },
+  { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
   { href: "/videos", label: "Videos" },
   { href: "/#about", label: "About" },

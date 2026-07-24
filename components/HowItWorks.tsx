@@ -32,7 +32,7 @@ export default function HowItWorks() {
                 {i + 1}
               </span>
             </div>
-            <h4 className="font-semibold text-primary mb-1.5">{step.title}</h4>
+            <h3 className="font-semibold text-primary mb-1.5">{step.title}</h3>
             <p className="text-sm text-on-surface-variant">{step.description}</p>
           </div>
         ))}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google";
+import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,28 +23,78 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://amahskitchen.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
   title: {
-    default: "Amahs kitchen",
-    template: "%s | Amahs kitchen",
+    default: "Amahs Kitchen | African Restaurant in Massachusetts",
+    template: `%s | ${siteConfig.name}`,
   },
-  description:
-    "Fresh, flavorful African meals available for pickup and delivery Registered business in the State of Massachusetts.",
+  description: siteConfig.description,
+  keywords: [
+    "Amahs Kitchen",
+    "Amah's Kitchen",
+    "African restaurant Massachusetts",
+    "African food Massachusetts",
+    "African catering Massachusetts",
+    "African food pickup and delivery",
+    ...(siteConfig.ownerName ? [siteConfig.ownerName] : []),
+  ],
+  creator: siteConfig.ownerName || siteConfig.name,
+  authors: [
+    {
+      name: siteConfig.ownerName || siteConfig.name,
+      url: siteConfig.url,
+    },
+  ],
+  publisher: siteConfig.name,
+  category: "restaurant",
+  referrer: "origin-when-cross-origin",
+  icons: {
+    icon: {
+      url: "/images/amahs-kitchen-favicon.png",
+      type: "image/png",
+      sizes: "64x64",
+    },
+    shortcut: "/images/amahs-kitchen-favicon.png",
+    apple: "/images/amahs-kitchen-logo.webp",
+  },
   openGraph: {
-    title: "Amahs kitchen | Authentic African Cuisine",
-    description: "Fresh, flavorful African meals available for pickup and delivery.",
-    url: siteUrl,
-    siteName: "Amahs kitchen",
+    title: "Amahs Kitchen | Authentic African Cuisine",
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/images/amahs-kitchen-social-card.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Amahs Kitchen authentic African cuisine in Massachusetts",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Amahs Kitchen | Authentic African Cuisine",
+    description: siteConfig.description,
+    images: ["/images/amahs-kitchen-social-card.jpg"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 export default function RootLayout({
@@ -53,6 +104,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable} ${cormorant.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+      </head>
       <body className="font-body bg-background text-on-surface heritage-pattern antialiased">
         {children}
       </body>

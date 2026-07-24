@@ -2,14 +2,49 @@
 
 const MAX_IMAGE_EDGE = 1920;
 const IMAGE_QUALITY = 0.82;
+export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+
+const SAFE_IMAGE_TYPES = new Set([
+  "image/avif",
+  "image/gif",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
+const SAFE_VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
 function safeBaseName(name: string) {
   return name.replace(/\.[^.]+$/, "").replace(/[^a-z0-9-_]/gi, "-").toLowerCase() || "image";
 }
 
+export function safeStorageName(name: string) {
+  const extension = name.match(/\.([a-z0-9]{1,10})$/i)?.[1]?.toLowerCase();
+  const base = safeBaseName(name).slice(0, 80);
+  return extension ? `${base}.${extension}` : base;
+}
+
+export function validateImageFile(file: File) {
+  if (!SAFE_IMAGE_TYPES.has(file.type)) {
+    throw new Error("Please choose a JPEG, PNG, WebP, AVIF, or GIF image.");
+  }
+  if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) {
+    throw new Error("Images must be smaller than 10MB.");
+  }
+}
+
+export function validateVideoFile(file: File) {
+  if (!SAFE_VIDEO_TYPES.has(file.type)) {
+    throw new Error("Please choose an MP4, WebM, or QuickTime video.");
+  }
+  if (file.size <= 0 || file.size > MAX_VIDEO_BYTES) {
+    throw new Error("Videos must be smaller than 50MB.");
+  }
+}
+
 export async function compressImage(file: File): Promise<File> {
-  if (!file.type.startsWith("image/")) throw new Error("Please choose a valid image file.");
-  if (file.type === "image/svg+xml" || file.size < 180 * 1024) return file;
+  validateImageFile(file);
+  if (file.size < 180 * 1024) return file;
 
   try {
     const source = await createImageBitmap(file);
@@ -34,7 +69,7 @@ export async function compressImage(file: File): Promise<File> {
 }
 
 export async function createVideoThumbnail(file: File): Promise<File> {
-  if (!file.type.startsWith("video/")) throw new Error("Please choose a valid video file.");
+  validateVideoFile(file);
   const url = URL.createObjectURL(file);
   const video = document.createElement("video");
   video.preload = "metadata";

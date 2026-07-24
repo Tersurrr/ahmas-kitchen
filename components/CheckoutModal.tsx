@@ -5,8 +5,16 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { useCart } from "@/store/cart";
 import { formatCurrency, getWhatsAppOrderUrl } from "@/lib/whatsapp";
-import { createClient } from "@/lib/supabase/client";
-import type { FulfillmentType } from "@/lib/types";
+import type { CartItem, FulfillmentType } from "@/lib/types";
+
+type OrderResponse = {
+  order?: {
+    id: string;
+    total: number;
+    items: CartItem[];
+  };
+  error?: string;
+};
 
 export default function CheckoutModal({
   open,
@@ -35,10 +43,18 @@ export default function CheckoutModal({
 
   async function handlePlaceOrder() {
     if (!canSubmit) return;
-    if (name.trim().length > 100 || phone.trim().length > 30 || address.trim().length > 250 || instructions.trim().length > 500) {
+    if (
+      name.trim().length > 100 ||
+      phone.trim().length > 30 ||
+      address.trim().length > 250 ||
+      instructions.trim().length > 500
+    ) {
       setError("Please shorten the information provided and try again.");
       return;
     }
+
+    const whatsappWindow = window.open("about:blank", "_blank");
+    if (whatsappWindow) whatsappWindow.opener = null;
     setSubmitting(true);
     setError("");
 
@@ -51,47 +67,51 @@ export default function CheckoutModal({
       time,
       instructions,
     };
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15_000);
 
-    // Best-effort: save a copy of the order in Supabase for record keeping.
-    // The WhatsApp handoff below still happens even if this fails.
     try {
-      const supabase = createClient();
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          customer_name: name,
-          phone,
-          address: fulfillment === "delivery" ? address : null,
-          fulfillment_type: fulfillment,
-          preferred_date: date || null,
-          preferred_time: time || null,
-          special_instructions: instructions || null,
-          total_price: subtotal(),
-        })
-        .select()
-        .single();
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...details,
+          items: items.map((item) => ({
+            menuItemId: item.menuItemId,
+            optionId: item.optionId,
+            quantity: item.quantity,
+            notes: item.specialInstructions || null,
+          })),
+        }),
+        signal: controller.signal,
+      });
+      const result = (await response.json().catch(() => ({}))) as OrderResponse;
 
-      if (!orderError && order) {
-        await supabase.from("order_items").insert(
-          items.map((i) => ({
-            order_id: order.id,
-            menu_item_id: i.menuItemId,
-            name: i.optionName ? `${i.name} (${i.optionName})` : i.name,
-            quantity: i.quantity,
-            unit_price: i.price,
-            notes: i.specialInstructions || null,
-          }))
-        );
+      if (!response.ok || !result.order) {
+        whatsappWindow?.close();
+        setError(result.error || "We couldn't confirm the order. Please try again.");
+        return;
       }
-    } catch {
-      // Supabase not configured yet — order still proceeds to WhatsApp.
-    }
 
-    const url = getWhatsAppOrderUrl(details, items);
-    window.open(url, "_blank", "noopener,noreferrer");
-    clear();
-    setSubmitting(false);
-    onClose();
+      const url = getWhatsAppOrderUrl(details, result.order.items, result.order.id);
+      if (whatsappWindow) {
+        whatsappWindow.location.replace(url);
+      } else {
+        window.location.assign(url);
+      }
+      clear();
+      onClose();
+    } catch (requestError) {
+      whatsappWindow?.close();
+      setError(
+        requestError instanceof DOMException && requestError.name === "AbortError"
+          ? "The order request timed out. Please check your connection and try again."
+          : "We couldn't confirm the order. Please check your connection and try again."
+      );
+    } finally {
+      window.clearTimeout(timeout);
+      setSubmitting(false);
+    }
   }
 
   return (

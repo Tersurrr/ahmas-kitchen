@@ -5,8 +5,15 @@ import { useState } from "react";
 import { Play } from "lucide-react";
 import type { Video } from "@/lib/types";
 
-export default function VideoCard({ video }: { video: Video }) {
+export default function VideoCard({
+  video,
+  headingLevel = "h3",
+}: {
+  video: Video;
+  headingLevel?: "h2" | "h3";
+}) {
   const [playing, setPlaying] = useState(false);
+  const Heading = headingLevel;
 
   return (
     <div className="bg-white rounded-xl shadow-soft overflow-hidden">
@@ -30,7 +37,7 @@ export default function VideoCard({ video }: { video: Video }) {
             {video.thumbnail_url && (
               <Image
                 src={video.thumbnail_url}
-                alt={video.title}
+                alt={`Preview of ${video.title}, an Amahs Kitchen cooking video`}
                 fill
                 loading="lazy"
                 sizes="(max-width: 768px) 100vw, 33vw"
@@ -46,7 +53,7 @@ export default function VideoCard({ video }: { video: Video }) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-display font-semibold text-primary">{video.title}</h3>
+        <Heading className="font-display font-semibold text-primary">{video.title}</Heading>
         {video.description && (
           <p className="text-sm text-on-surface-variant mt-1 line-clamp-2">{video.description}</p>
         )}

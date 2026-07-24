@@ -57,7 +57,7 @@ export default function MenuCard({ item }: { item: MenuItem }) {
           <div className="relative aspect-[4/3] bg-surface-container-high overflow-hidden">
             <Image
               src={image}
-              alt={item.name}
+              alt={`${item.name}, an African dish from Amahs Kitchen`}
               fill
               sizes="(max-width: 768px) 50vw, 300px"
               className="object-cover group-hover:scale-105 transition-transform duration-500"

@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { Video } from "@/lib/types";
 import { Plus, Pencil, Trash2, X, UploadCloud } from "lucide-react";
-import { createVideoThumbnail } from "@/lib/client-media";
+import {
+  createVideoThumbnail,
+  safeStorageName,
+  validateVideoFile,
+} from "@/lib/client-media";
 
 type FormState = {
   id?: string;
@@ -28,18 +32,18 @@ export default function AdminVideosPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase.from("videos").select("*").order("sort_order");
     setVideos((data as Video[]) || []);
     setLoading(false);
-  }
+  }, [supabase]);
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [load]);
 
   function openNew() {
     setForm(emptyForm);
@@ -61,14 +65,18 @@ export default function AdminVideosPage() {
 
   async function handleVideoUpload(file: File | null) {
     if (!file) return;
-    if (!file.type.startsWith("video/")) {
-      setError("Please choose a valid video file.");
+    try {
+      validateVideoFile(file);
+    } catch (validationError) {
+      setError(
+        validationError instanceof Error ? validationError.message : "Please choose a valid video."
+      );
       return;
     }
     setUploadingVideo(true);
     setUploadProgress(0);
     setError("");
-    const path = `${Date.now()}-${crypto.randomUUID()}-${file.name}`;
+    const path = `${Date.now()}-${crypto.randomUUID()}-${safeStorageName(file.name)}`;
 
     // Supabase JS v2 doesn't expose granular progress; show an indeterminate pulse via 90% cap.
     setUploadProgress(30);
@@ -91,7 +99,7 @@ export default function AdminVideosPage() {
       try {
         setUploadingThumb(true);
         const thumbnail = await createVideoThumbnail(file);
-        const thumbnailPath = `${Date.now()}-${crypto.randomUUID()}-${thumbnail.name}`;
+        const thumbnailPath = `${Date.now()}-${crypto.randomUUID()}-${safeStorageName(thumbnail.name)}`;
         const { error: thumbnailError } = await supabase.storage.from("video-thumbnails").upload(thumbnailPath, thumbnail, {
           cacheControl: "31536000",
           contentType: thumbnail.type,
@@ -123,7 +131,7 @@ export default function AdminVideosPage() {
       setUploadingThumb(false);
       return;
     }
-    const path = `${Date.now()}-${crypto.randomUUID()}-${optimizedFile.name}`;
+    const path = `${Date.now()}-${crypto.randomUUID()}-${safeStorageName(optimizedFile.name)}`;
     const { error: uploadError } = await supabase.storage.from("video-thumbnails").upload(path, optimizedFile, {
       cacheControl: "31536000",
       contentType: optimizedFile.type,
@@ -209,10 +217,10 @@ export default function AdminVideosPage() {
           videos.map((v) => (
             <div key={v.id} className="bg-white rounded-xl shadow-soft overflow-hidden">
               <div className="relative aspect-video bg-surface-container-high">
-                {v.thumbnail_url && <Image src={v.thumbnail_url} alt={v.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />}
+                {v.thumbnail_url && <Image src={v.thumbnail_url} alt={`Video thumbnail for ${v.title}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />}
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-primary">{v.title}</h3>
+                <h2 className="font-semibold text-primary">{v.title}</h2>
                 <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{v.description}</p>
                 <div className="flex justify-end gap-1 mt-3">
                   <button onClick={() => openEdit(v)} className="p-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant">
@@ -279,7 +287,7 @@ export default function AdminVideosPage() {
                 </label>
                 {form.thumbnail_url && (
                   <div className="relative w-24 h-16 rounded-lg overflow-hidden mb-2 border border-outline-variant/30">
-                    <Image src={form.thumbnail_url} alt="" fill sizes="96px" className="object-cover" />
+                    <Image src={form.thumbnail_url} alt="Preview of uploaded video thumbnail" fill sizes="96px" className="object-cover" />
                   </div>
                 )}
                 <label className="flex items-center gap-2 justify-center border-2 border-dashed border-outline-variant rounded-lg py-4 cursor-pointer hover:bg-surface-container-low transition-colors text-sm text-on-surface-variant">
@@ -294,6 +302,8 @@ export default function AdminVideosPage() {
                 </label>
               </div>
             </div>
+
+            {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
 
             <button
               onClick={handleSave}

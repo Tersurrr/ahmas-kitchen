@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { OrderRecord } from "@/lib/types";
 import { formatCurrency } from "@/lib/whatsapp";
+import { toCsv } from "@/lib/csv";
 import { Search, Download, Trash2, X } from "lucide-react";
 
 export default function AdminOrdersPage() {
@@ -13,9 +14,9 @@ export default function AdminOrdersPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [selected, setSelected] = useState<OrderRecord | null>(null);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
       .from("orders")
@@ -23,11 +24,11 @@ export default function AdminOrdersPage() {
       .order("created_at", { ascending: false });
     setOrders((data as unknown as OrderRecord[]) || []);
     setLoading(false);
-  }
+  }, [supabase]);
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [load]);
 
   const filtered = useMemo(() => {
     return orders.filter((o) => {
@@ -63,10 +64,8 @@ export default function AdminOrdersPage() {
       o.total_price,
       new Date(o.created_at).toLocaleString(),
     ]);
-    const csv = [header, ...rows]
-      .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const csv = toCsv([header, ...rows]);
+    const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

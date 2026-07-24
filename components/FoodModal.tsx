@@ -78,7 +78,13 @@ export default function FoodModal({
           >
             {image && (
               <div className="relative aspect-[16/10] bg-surface-container-high">
-                <Image src={image} alt={item.name} fill sizes="600px" className="object-cover" />
+                <Image
+                  src={image}
+                  alt={`${item.name}, an African dish from Amahs Kitchen`}
+                  fill
+                  sizes="600px"
+                  className="object-cover"
+                />
                 <button
                   onClick={onClose}
                   aria-label="Close"
@@ -164,9 +170,10 @@ export default function FoodModal({
                   </button>
                   <span className="w-5 text-center font-semibold">{quantity}</span>
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
+                    onClick={() => setQuantity((q) => Math.min(50, q + 1))}
+                    disabled={quantity >= 50}
                     aria-label="Increase quantity"
-                    className="p-1 hover:bg-surface-container rounded-full"
+                    className="p-1 hover:bg-surface-container rounded-full disabled:opacity-40"
                   >
                     <Plus size={16} />
                   </button>
@@ -181,6 +188,7 @@ export default function FoodModal({
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
                   rows={2}
+                  maxLength={500}
                   placeholder="Extra spicy, no onions, etc."
                   className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
                 />

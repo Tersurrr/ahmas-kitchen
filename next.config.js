@@ -1,11 +1,27 @@
 /** @type {import('next').NextConfig} */
+const supabaseHostname = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "").hostname;
+  } catch {
+    return "";
+  }
+})();
+
 const nextConfig = {
   // Keep Turbopack scoped to this project when another package-lock.json exists higher up.
   turbopack: {
     root: __dirname,
   },
+  // CI and diagnostics can isolate their build cache without affecting production defaults.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   async headers() {
     return [
+      {
+        source: "/images/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
       {
         source: "/:path*",
         headers: [
@@ -23,10 +39,13 @@ const nextConfig = {
     // Next.js 16 only permits configured image quality values.
     qualities: [75, 80],
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "*.supabase.co",
-      },
+      ...(supabaseHostname
+        ? [{
+            protocol: "https",
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/public/**",
+          }]
+        : []),
       {
         protocol: "https",
         hostname: "images.unsplash.com",
