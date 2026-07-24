@@ -2,8 +2,14 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
-function contentSecurityPolicy(nonce: string) {
+function contentSecurityPolicy(nonce: string | null) {
   const developmentEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+  const scriptSource = nonce
+    ? `'self' 'nonce-${nonce}'`
+    : "'self' 'unsafe-inline'";
+  const styleSource = nonce
+    ? `'self' 'nonce-${nonce}'`
+    : "'self' 'unsafe-inline'";
   let supabaseOrigin = "";
   let supabaseWebSocketOrigin = "";
   try {
@@ -20,8 +26,8 @@ function contentSecurityPolicy(nonce: string) {
     "object-src 'none'",
     "frame-ancestors 'none'",
     "form-action 'self'",
-    `script-src 'self' 'nonce-${nonce}'${developmentEval}`,
-    `style-src 'self' 'nonce-${nonce}'`,
+    `script-src ${scriptSource}${developmentEval}`,
+    `style-src ${styleSource}`,
     // Framer Motion applies per-element transforms and opacity through style attributes.
     // This is narrower than allowing inline <style> blocks and keeps script execution strict.
     "style-src-attr 'unsafe-inline'",
@@ -35,16 +41,24 @@ function contentSecurityPolicy(nonce: string) {
 
 export async function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
-  const nonce = btoa(crypto.randomUUID());
-  const csp = contentSecurityPolicy(nonce);
-
-  // Pass the nonce to the renderer so Next can apply it to framework-generated tags.
-  requestHeaders.set("x-nonce", nonce);
-  requestHeaders.set("Content-Security-Policy", csp);
   const path = request.nextUrl.pathname;
   const isAdminPath = path === "/admin" || path.startsWith("/admin/");
   const isLoginRoute = path === "/admin/login" || path === "/admin/login/";
   const isAdminRoute = isAdminPath && !isLoginRoute;
+  // Public pages use ISR, so their HTML can be served from a shared cache.
+  // A per-request nonce would differ from the nonce stored in that cached HTML
+  // and browsers would block Next.js from revealing streamed page content.
+  // Admin pages are always dynamic and retain the stronger per-request nonce.
+  const nonce = isAdminPath ? btoa(crypto.randomUUID()) : null;
+  const csp = contentSecurityPolicy(nonce);
+
+  if (nonce) {
+    // Pass the nonce to the renderer so Next can apply it to framework-generated tags.
+    requestHeaders.set("x-nonce", nonce);
+  } else {
+    requestHeaders.delete("x-nonce");
+  }
+  requestHeaders.set("Content-Security-Policy", csp);
 
   const nextResponse = () => {
     const response = NextResponse.next({ request: { headers: requestHeaders } });
