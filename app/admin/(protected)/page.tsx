@@ -1,226 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ahmas Kitchen — Back Soon</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --charcoal: #22201B;
-    --charcoal-deep: #1A1815;
-    --board: #2E3229;
-    --board-edge: #3B4033;
-    --butter: #E8B93F;
-    --butter-dim: #C79A2E;
-    --cream: #F3EAD6;
-    --cream-dim: #B9AF9A;
-    --brick: #A8452F;
-    --string: #6B6152;
-  }
+"use client";
 
-  * { box-sizing: border-box; }
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  ClipboardList,
+  Clapperboard,
+  PackagePlus,
+  Tag,
+  UtensilsCrossed,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { formatCurrency } from "@/lib/whatsapp";
+import type { OrderRecord } from "@/lib/types";
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: var(--charcoal);
-    background-image:
-      radial-gradient(ellipse at 50% -10%, rgba(232,185,63,0.08), transparent 55%),
-      repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 3px);
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-  }
+export default function AdminOverviewPage() {
+  const [stats, setStats] = useState({ items: 0, categories: 0, videos: 0, orders: 0 });
+  const [recentOrders, setRecentOrders] = useState<OrderRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  .stage {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 8vh 20px 6vh;
-    position: relative;
-  }
+  useEffect(() => {
+    async function loadDashboard() {
+      const supabase = createClient();
+      const [itemsRes, categoriesRes, videosRes, ordersRes, recentRes] = await Promise.all([
+        supabase.from("menu_items").select("id", { count: "exact", head: true }),
+        supabase.from("categories").select("id", { count: "exact", head: true }),
+        supabase.from("videos").select("id", { count: "exact", head: true }),
+        supabase.from("orders").select("id", { count: "exact", head: true }),
+        supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(6),
+      ]);
 
-  /* Hook on the wall */
-  .hook {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #8b8370, #4a4536);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    margin-bottom: -2px;
-    z-index: 3;
-  }
+      setStats({
+        items: itemsRes.count || 0,
+        categories: categoriesRes.count || 0,
+        videos: videosRes.count || 0,
+        orders: ordersRes.count || 0,
+      });
+      setRecentOrders((recentRes.data as OrderRecord[]) || []);
+      setLoading(false);
+    }
 
-  /* String from hook to sign */
-  .string {
-    width: 2px;
-    height: 46px;
-    background: linear-gradient(var(--string), var(--string));
-    transform-origin: top center;
-    z-index: 2;
-  }
+    loadDashboard();
+  }, []);
 
-  .sign-wrap {
-    transform-origin: top center;
-    animation: swing 6s ease-in-out infinite;
-  }
+  const cards = [
+    { label: "Menu items", value: stats.items, icon: UtensilsCrossed, href: "/admin/menu" },
+    { label: "Categories", value: stats.categories, icon: Tag, href: "/admin/categories" },
+    { label: "Videos", value: stats.videos, icon: Clapperboard, href: "/admin/videos" },
+    { label: "Orders", value: stats.orders, icon: ClipboardList, href: "/admin/orders" },
+  ];
 
-  @keyframes swing {
-    0%, 100% { transform: rotate(-2.3deg); }
-    50% { transform: rotate(2.3deg); }
-  }
-
-  .board {
-    width: min(420px, 86vw);
-    background: var(--board);
-    border: 10px solid var(--board-edge);
-    border-radius: 10px;
-    padding: 46px 34px 38px;
-    box-shadow:
-      0 30px 60px -20px rgba(0,0,0,0.7),
-      inset 0 0 40px rgba(0,0,0,0.35);
-    position: relative;
-    text-align: center;
-  }
-
-  .board::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 20px;
-    background: var(--string);
-  }
-
-  .eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--brick);
-    font-weight: 700;
-    margin-bottom: 14px;
-  }
-
-  .headline {
-    font-family: 'Caveat', cursive;
-    font-size: 64px;
-    line-height: 0.95;
-    color: var(--butter);
-    font-weight: 700;
-    margin: 0 0 6px;
-    text-shadow: 0 2px 0 rgba(0,0,0,0.3);
-  }
-
-  .subhead {
-    font-family: 'Caveat', cursive;
-    font-size: 30px;
-    color: var(--cream);
-    margin: 0 0 22px;
-    font-weight: 600;
-  }
-
-  .divider {
-    width: 60px;
-    height: 2px;
-    background: var(--cream-dim);
-    opacity: 0.35;
-    margin: 0 auto 22px;
-  }
-
-  .message {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--cream-dim);
-    margin: 0 0 26px;
-    font-weight: 400;
-  }
-
-  .status-row {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border: 1px solid rgba(243,234,214,0.15);
-    border-radius: 999px;
-    font-size: 13px;
-    color: var(--cream-dim);
-    letter-spacing: 0.02em;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--brick);
-    box-shadow: 0 0 0 3px rgba(168,69,47,0.2);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.45; }
-  }
-
-  .footer {
-    margin-top: 34px;
-    text-align: center;
-  }
-
-  .footer-name {
-    font-family: 'Caveat', cursive;
-    font-size: 22px;
-    color: var(--cream-dim);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  .footer-sub {
-    font-size: 12px;
-    color: var(--cream-dim);
-    opacity: 0.55;
-    margin-top: 4px;
-    letter-spacing: 0.04em;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sign-wrap { animation: none; }
-    .dot { animation: none; }
-  }
-
-  @media (max-width: 480px) {
-    .headline { font-size: 50px; }
-    .subhead { font-size: 24px; }
-  }
-</style>
-</head>
-<body>
-  <div class="stage">
-    <div class="hook"></div>
-    <div class="string"></div>
-    <div class="sign-wrap">
-      <div class="board">
-        <div class="eyebrow">Ahmas Kitchen</div>
-        <h1 class="headline">Back in a bit</h1>
-        <p class="subhead">the kitchen's being seasoned</p>
-        <div class="divider"></div>
-        <p class="message">We're updating the menu and tidying the counter, we'll be plating up again shortly.</p>
-        <div class="status-row">
-          <span class="dot"></span>
-          <span>Currently closed for updates</span>
+  return (
+    <div className="max-w-6xl mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-7">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-primary mt-1">Admin</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Protecting user data is your top priority</p>
         </div>
+        <Link href="/admin/menu" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary hover:bg-primary-dark transition-colors">
+          <PackagePlus size={16} /> Add menu item
+        </Link>
       </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 border border-outline-variant/30 rounded-2xl overflow-hidden bg-white shadow-soft mb-7">
+        {cards.map(({ label, value, icon: Icon, href }, index) => (
+          <Link key={label} href={href} className={`group relative min-h-28 p-4 sm:p-5 hover:bg-surface-container-low transition-colors ${index < 2 ? "border-b lg:border-b-0" : ""} ${index % 2 === 0 ? "border-r lg:border-r" : ""} border-outline-variant/30`}>
+            <Icon className="text-secondary mb-3" size={18} />
+            <p className="text-2xl font-bold text-primary leading-none">{loading ? "—" : value}</p>
+            <p className="text-xs text-on-surface-variant mt-1.5">{label}</p>
+            <ArrowUpRight size={15} className="absolute right-4 top-4 text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity" />
+          </Link>
+        ))}
+      </div>
+
+      <section className="bg-white rounded-2xl shadow-soft overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/20">
+          <div>
+            <h2 className="font-semibold text-primary">Latest orders</h2>
+            <p className="text-xs text-on-surface-variant mt-0.5">The six most recent customer requests</p>
+          </div>
+          <Link href="/admin/orders" className="text-sm font-semibold text-primary hover:text-secondary transition-colors">View all</Link>
+        </div>
+        {recentOrders.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <ClipboardList className="mx-auto text-secondary mb-3" size={24} />
+            <p className="text-sm text-on-surface-variant">No orders yet. New orders will appear here.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[640px]">
+              <thead>
+                <tr className="text-left text-on-surface-variant border-b border-outline-variant/20">
+                  <th className="py-3 px-5 font-medium">Customer</th>
+                  <th className="py-3 pr-4 font-medium">Phone</th>
+                  <th className="py-3 pr-4 font-medium">Type</th>
+                  <th className="py-3 pr-4 font-medium">Total</th>
+                  <th className="py-3 pr-5 font-medium">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="border-b border-outline-variant/10 last:border-0">
+                    <td className="py-3 px-5 font-medium">{order.customer_name}</td>
+                    <td className="py-3 pr-4">{order.phone}</td>
+                    <td className="py-3 pr-4 capitalize">{order.fulfillment_type}</td>
+                    <td className="py-3 pr-4">{formatCurrency(order.total_price)}</td>
+                    <td className="py-3 pr-5 whitespace-nowrap">{new Date(order.created_at).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
-    <div class="footer">
-      <div class="footer-name">Ahmas Kitchen</div>
-      <div class="footer-sub">THANK YOU FOR YOUR PATIENCE</div>
-    </div>
-  </div>
-</body>
-</html>
+  );
+}
