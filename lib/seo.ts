@@ -383,6 +383,7 @@ export function videosStructuredData(videos: Video[]) {
           video.description ||
           `${siteConfig.name} African food preparation and cooking video.`,
         contentUrl: video.video_url,
+        uploadDate: new Date(video.created_at).toISOString(),
         ...(video.thumbnail_url
           ? { thumbnailUrl: [absoluteUrl(video.thumbnail_url)] }
           : {}),

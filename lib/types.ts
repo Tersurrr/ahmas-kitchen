@@ -44,6 +44,7 @@ export type Video = {
   video_url: string;
   thumbnail_url: string | null;
   sort_order: number;
+  created_at: string;
 };
 
 export type FulfillmentType = "pickup" | "delivery";
