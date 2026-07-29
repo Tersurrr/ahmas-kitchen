@@ -1,0 +1,22 @@
+{
+  "name": "Amahs Kitchen",
+  "short_name": "Amahs Kitchen",
+  "description": "Authentic African food for pickup, delivery, and catering in Massachusetts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffaf0",
+  "theme_color": "#2f3b28",
+  "icons": [
+    {
+      "src": "/images/amahs-kitchen-favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/amahs-kitchen-logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}

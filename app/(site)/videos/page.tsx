@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import JsonLd from "@/components/JsonLd";
 import VideoCard from "@/components/VideoCard";
+import SocialFoodPosts from "@/components/SocialFoodPosts";
 import { getVideos } from "@/lib/data";
 import {
   createPageMetadata,
@@ -45,6 +46,8 @@ export default async function VideosPage() {
         <p className="text-on-surface-variant max-w-xl mb-10">
           A behind the scenes look at food preparation, cooking demonstrations, and freshly prepared meals
         </p>
+
+        <SocialFoodPosts />
 
         {videos.length === 0 ? (
           <p className="text-on-surface-variant">No videos yet check back soon</p>

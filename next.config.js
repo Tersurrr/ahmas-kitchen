@@ -37,7 +37,7 @@ const nextConfig = {
   },
   images: {
     // Next.js 16 only permits configured image quality values.
-    qualities: [75, 80],
+    qualities: [65, 75, 80],
     remotePatterns: [
       ...(supabaseHostname
         ? [{

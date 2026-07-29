@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Mail, Phone, MessageCircle, Facebook, ShieldCheck } from "lucide-react";
+import { Mail, Phone, MessageCircle, Facebook, Music2, ShieldCheck } from "lucide-react";
+import { siteConfig } from "@/lib/site-config";
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "18572615923";
 const EMAIL = process.env.NEXT_PUBLIC_BUSINESS_EMAIL || "sandrineamah25@gmail.com";
@@ -15,22 +16,39 @@ export default function Footer() {
               Amahs kitchen is a professionally operated food business committed to
               serving authentic African cuisine.
             </p>
-            <div className="flex gap-3">
+            <p className="text-xs font-bold tracking-widest uppercase text-primary mb-3">
+              Follow us
+            </p>
+            <div className="flex flex-wrap gap-3">
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-secondary hover:text-white transition-all"
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-surface-container-high px-3 text-sm font-semibold text-primary hover:bg-secondary hover:text-white transition-all"
               >
                 <MessageCircle size={18} />
+                WhatsApp
               </a>
               <a
-                href="#"
-                aria-label="Facebook"
-                className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-secondary hover:text-white transition-all"
+                href={siteConfig.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Amahs Kitchen on Facebook"
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-surface-container-high px-3 text-sm font-semibold text-primary hover:bg-secondary hover:text-white transition-all"
               >
                 <Facebook size={18} />
+                Facebook
+              </a>
+              <a
+                href={siteConfig.tiktokUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Amahs Kitchen on TikTok"
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-surface-container-high px-3 text-sm font-semibold text-primary hover:bg-secondary hover:text-white transition-all"
+              >
+                <Music2 size={18} />
+                TikTok
               </a>
             </div>
           </div>

@@ -1,4 +1,6 @@
 const fallbackSiteUrl = "https://amahskitchen.com";
+const fallbackFacebookUrl = "https://www.facebook.com/profile.php?id=61582742296659";
+const fallbackTikTokUrl = "https://www.tiktok.com/@sandrineamah";
 
 function clean(value: string | undefined) {
   return value?.trim() || "";
@@ -19,13 +21,14 @@ export const siteConfig = {
   alternateName: "Amah's Kitchen",
   url: siteUrlFromEnvironment(),
   description:
-    "Amahs Kitchen serves freshly prepared, authentic African cuisine for pickup, delivery, and catering in Massachusetts.",
+    "Amahs Kitchen is a Massachusetts African food business offering freshly prepared meals, pickup, delivery, catering, and easy online ordering.",
   ownerName: clean(process.env.NEXT_PUBLIC_BUSINESS_OWNER),
   email: clean(process.env.NEXT_PUBLIC_BUSINESS_EMAIL) || "sandrineamah25@gmail.com",
   phone: clean(process.env.NEXT_PUBLIC_BUSINESS_PHONE) || "+1 (857) 261-5923",
   whatsappNumber: clean(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) || "18572615923",
-  facebookUrl: clean(process.env.NEXT_PUBLIC_FACEBOOK_URL),
+  facebookUrl: clean(process.env.NEXT_PUBLIC_FACEBOOK_URL) || fallbackFacebookUrl,
   instagramUrl: clean(process.env.NEXT_PUBLIC_INSTAGRAM_URL),
+  tiktokUrl: clean(process.env.NEXT_PUBLIC_TIKTOK_URL) || fallbackTikTokUrl,
   priceRange: clean(process.env.NEXT_PUBLIC_PRICE_RANGE) || "$$",
   address: {
     streetAddress: clean(process.env.NEXT_PUBLIC_BUSINESS_STREET_ADDRESS),
@@ -37,8 +40,8 @@ export const siteConfig = {
 } as const;
 
 export function restaurantJsonLd() {
-  const { address, ownerName, facebookUrl, instagramUrl, ...business } = siteConfig;
-  const sameAs = [facebookUrl, instagramUrl].filter(Boolean);
+  const { address, ownerName, facebookUrl, instagramUrl, tiktokUrl, ...business } = siteConfig;
+  const sameAs = [facebookUrl, instagramUrl, tiktokUrl].filter(Boolean);
 
   return {
     "@context": "https://schema.org",

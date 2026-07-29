@@ -40,7 +40,8 @@ export default function VideoCard({
                 alt={`Preview of ${video.title}, an Amahs Kitchen cooking video`}
                 fill
                 loading="lazy"
-                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={65}
+                sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 3rem), 380px"
                 className="object-cover"
               />
             )}

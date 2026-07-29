@@ -50,14 +50,25 @@ export const metadata: Metadata = {
   publisher: siteConfig.name,
   category: "restaurant",
   referrer: "origin-when-cross-origin",
+  manifest: "/site.webmanifest",
   icons: {
-    icon: {
-      url: "/images/amahs-kitchen-favicon.png",
-      type: "image/png",
-      sizes: "64x64",
+    icon: [
+      {
+        url: "/favicon.ico",
+        sizes: "16x16 32x32 48x48 64x64",
+      },
+      {
+        url: "/images/amahs-kitchen-favicon.png",
+        type: "image/png",
+        sizes: "64x64",
+      },
+    ],
+    shortcut: "/favicon.ico",
+    apple: {
+      url: "/images/amahs-kitchen-logo.webp",
+      type: "image/webp",
+      sizes: "512x512",
     },
-    shortcut: "/images/amahs-kitchen-favicon.png",
-    apple: "/images/amahs-kitchen-logo.webp",
   },
   openGraph: {
     title: "Amahs Kitchen | Authentic African Cuisine",

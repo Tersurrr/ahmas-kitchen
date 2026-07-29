@@ -103,7 +103,11 @@ export function createPageMetadata({
 export function siteStructuredData() {
   const logoUrl = absoluteUrl("/images/amahs-kitchen-logo.webp");
   const socialImageUrl = absoluteUrl(socialImagePath);
-  const sameAs = [siteConfig.facebookUrl, siteConfig.instagramUrl].filter(Boolean);
+  const sameAs = [
+    siteConfig.facebookUrl,
+    siteConfig.instagramUrl,
+    siteConfig.tiktokUrl,
+  ].filter(Boolean);
   const address = postalAddress();
 
   return {
@@ -151,7 +155,7 @@ export function siteStructuredData() {
         ...(sameAs.length ? { sameAs } : {}),
       },
       {
-        "@type": ["Restaurant", "LocalBusiness"],
+        "@type": "Restaurant",
         "@id": `${siteConfig.url}/#restaurant`,
         name: siteConfig.name,
         alternateName: siteConfig.alternateName,
@@ -171,6 +175,13 @@ export function siteStructuredData() {
         currenciesAccepted: "USD",
         paymentAccepted: "Cash App, Zelle, Stripe, Apple Pay",
         servesCuisine: cuisineTypes,
+        slogan: "Authentic African Cuisine, Freshly Prepared",
+        knowsAbout: [
+          "African cuisine",
+          "African catering",
+          "African food pickup",
+          "African food delivery",
+        ],
         areaServed: {
           "@type": "AdministrativeArea",
           name: "Massachusetts",
