@@ -59,6 +59,7 @@ export default function MenuCard({ item }: { item: MenuItem }) {
               src={image}
               alt={`${item.name}, an African dish from Amahs Kitchen`}
               fill
+              quality={65}
               sizes="(max-width: 768px) 50vw, 300px"
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
