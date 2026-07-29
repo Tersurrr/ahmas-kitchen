@@ -31,6 +31,7 @@ type WebPageStructuredDataInput = {
   path: string;
   breadcrumbs: Breadcrumb[];
   pageType?: "WebPage" | "AboutPage" | "CollectionPage";
+  primaryImageUrl?: string;
 };
 
 function absoluteUrl(path: string) {
@@ -133,6 +134,7 @@ export function siteStructuredData() {
           "@id": `${siteConfig.url}/#logo`,
         },
         image: socialImageUrl,
+        thumbnailUrl: socialImageUrl,
         email: siteConfig.email,
         telephone: siteConfig.phone,
         address,
@@ -165,6 +167,7 @@ export function siteStructuredData() {
           "@id": `${siteConfig.url}/#logo`,
         },
         image: [socialImageUrl, logoUrl],
+        thumbnailUrl: socialImageUrl,
         telephone: siteConfig.phone,
         email: siteConfig.email,
         address,
@@ -221,6 +224,8 @@ export function siteStructuredData() {
         name: siteConfig.name,
         alternateName: siteConfig.alternateName,
         description: siteConfig.description,
+        image: socialImageUrl,
+        thumbnailUrl: socialImageUrl,
         publisher: {
           "@id": `${siteConfig.url}/#organization`,
         },
@@ -236,9 +241,11 @@ export function webPageStructuredData({
   path,
   breadcrumbs,
   pageType = "WebPage",
+  primaryImageUrl = socialImagePath,
 }: WebPageStructuredDataInput) {
   const pageUrl = absoluteUrl(path);
   const breadcrumbId = `${pageUrl}#breadcrumb`;
+  const pageImageUrl = absoluteUrl(primaryImageUrl);
 
   return {
     "@context": "https://schema.org",
@@ -255,6 +262,15 @@ export function webPageStructuredData({
         about: {
           "@id": `${siteConfig.url}/#restaurant`,
         },
+        primaryImageOfPage: {
+          "@type": "ImageObject",
+          "@id": `${pageUrl}#primaryimage`,
+          url: pageImageUrl,
+          contentUrl: pageImageUrl,
+          caption: `${name} image`,
+        },
+        image: pageImageUrl,
+        thumbnailUrl: pageImageUrl,
         breadcrumb: {
           "@id": breadcrumbId,
         },

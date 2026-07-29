@@ -24,6 +24,8 @@ export const metadata: Metadata = createPageMetadata({
 
 export default async function MenuPage() {
   const [categories, items] = await Promise.all([getCategories(), getMenuItems()]);
+  const primaryMenuImage = items.find((item) => item.menu_images?.[0]?.url)
+    ?.menu_images?.[0]?.url;
 
   return (
     <>
@@ -33,6 +35,7 @@ export default async function MenuPage() {
           description,
           path: "/menu",
           pageType: "CollectionPage",
+          primaryImageUrl: primaryMenuImage,
           breadcrumbs: [
             { name: "Home", path: "/" },
             { name: "Menu", path: "/menu" },

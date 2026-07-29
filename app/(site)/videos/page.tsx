@@ -31,6 +31,7 @@ export default async function VideosPage() {
           description,
           path: "/videos",
           pageType: "CollectionPage",
+          primaryImageUrl: videos.find((video) => video.thumbnail_url)?.thumbnail_url || undefined,
           breadcrumbs: [
             { name: "Home", path: "/" },
             { name: "Kitchen Videos", path: "/videos" },
