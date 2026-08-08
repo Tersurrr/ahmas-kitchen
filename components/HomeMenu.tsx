@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/whatsapp";
 import { getDefaultOption, getDisplayPrice, requiresOptionSelection } from "@/lib/menu-options";
 import { useCart } from "@/store/cart";
 import FoodModal from "./FoodModal";
+import MenuCard from "./MenuCard";
 
 export default function HomeMenu({ categories, items }: { categories: Category[]; items: MenuItem[] }) {
   const addItem = useCart((state) => state.addItem);
@@ -53,7 +54,28 @@ export default function HomeMenu({ categories, items }: { categories: Category[]
         <Link href="/menu" className="shrink-0 text-sm font-semibold text-primary underline underline-offset-4 hover:text-secondary">View details →</Link>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+      <div className="space-y-8 md:hidden">
+        {sections.map(({ category, items: categoryItems }) => (
+          <section key={category.id} aria-labelledby={`home-category-mobile-${category.id}`}>
+            <div className="mb-4 flex items-center gap-3">
+              <h3
+                id={`home-category-mobile-${category.id}`}
+                className="font-display text-2xl font-bold text-primary"
+              >
+                {category.name}
+              </h3>
+              <span className="h-px flex-1 bg-secondary/40" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {categoryItems.slice(0, 4).map((item) => (
+                <MenuCard key={item.id} item={item} />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <div className="hidden gap-8 md:grid md:grid-cols-2 xl:grid-cols-3">
         {sections.map(({ category, items: categoryItems }) => (
           <section key={category.id} aria-labelledby={`home-category-${category.id}`} className="rounded-xl bg-white p-5 shadow-soft">
             <div className="mb-3 flex items-center gap-3">

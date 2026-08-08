@@ -25,21 +25,23 @@ export default function AddedToCartToast() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.25 }}
-          className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[65] bg-primary text-on-primary rounded-full shadow-modal pl-4 pr-2 py-2 flex items-center gap-3"
+          className="pointer-events-none fixed inset-x-3 bottom-20 z-[65] flex justify-center md:bottom-6"
         >
-          <CheckCircle2 size={18} className="text-secondary shrink-0" />
-          <span className="text-sm font-medium whitespace-nowrap">
-            Added {lastAdded.name} to cart
-          </span>
-          <button
-            onClick={() => {
-              openCart();
-              setVisible(false);
-            }}
-            className="text-xs font-semibold bg-white/15 hover:bg-white/25 transition-colors rounded-full px-3 py-1.5 whitespace-nowrap"
-          >
-            View Cart
-          </button>
+          <div className="pointer-events-auto flex max-w-full items-center gap-2 rounded-full bg-primary py-2 pl-3 pr-2 text-on-primary shadow-modal sm:gap-3 sm:pl-4">
+            <CheckCircle2 size={18} className="shrink-0 text-secondary" />
+            <span className="min-w-0 truncate text-sm font-medium">
+              Added {lastAdded.name} to cart
+            </span>
+            <button
+              onClick={() => {
+                openCart();
+                setVisible(false);
+              }}
+              className="shrink-0 whitespace-nowrap rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-white/25"
+            >
+              View Cart
+            </button>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/store/cart";
 import { formatCurrency } from "@/lib/whatsapp";
@@ -48,7 +49,17 @@ export default function CartDrawer() {
                   <ul className="space-y-5">
                     {items.map((item) => (
                       <li key={`${item.menuItemId}::${item.optionId ?? "none"}`} className="flex gap-4">
-                        <div className="w-16 h-16 rounded-lg bg-surface-container-high overflow-hidden shrink-0" />
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-surface-container-high">
+                          {item.image && (
+                            <Image
+                              src={item.image}
+                              alt={`${item.name} thumbnail`}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
                         <div className="flex-1">
                           <div className="flex justify-between">
                             <p className="font-semibold text-sm text-on-surface">{item.name}</p>
