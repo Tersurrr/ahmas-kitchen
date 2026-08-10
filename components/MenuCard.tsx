@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { ImageIcon, Plus } from "lucide-react";
 import type { MenuItem } from "@/lib/types";
 import { formatCurrency } from "@/lib/whatsapp";
 import { getDefaultOption, getDisplayPrice, requiresOptionSelection } from "@/lib/menu-options";
@@ -11,6 +11,7 @@ import FoodModal from "./FoodModal";
 
 export default function MenuCard({ item }: { item: MenuItem }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const addItem = useCart((s) => s.addItem);
   const image = item.menu_images?.[0]?.url;
   const displayPrice = getDisplayPrice(item);
@@ -55,16 +56,25 @@ export default function MenuCard({ item }: { item: MenuItem }) {
       >
         {image && (
           <div className="relative aspect-[4/3] bg-surface-container-high overflow-hidden">
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-3 text-center text-on-surface-variant animate-pulse">
+                <ImageIcon size={28} aria-hidden="true" />
+                <span className="text-xs font-medium">Loading photo…</span>
+              </div>
+            )}
             <Image
               src={image}
               alt={`${item.name}, an African dish from Amahs Kitchen`}
               fill
               quality={65}
               sizes="(max-width: 768px) 50vw, 300px"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              onLoad={() => setImageLoaded(true)}
+              className={`object-cover transition-[opacity,transform] duration-500 group-hover:scale-105 ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
             />
             {!item.is_available && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <div className="absolute inset-0 z-10 bg-black/50 flex items-center justify-center">
                 <span className="text-white text-sm font-semibold">Sold Out</span>
               </div>
             )}
