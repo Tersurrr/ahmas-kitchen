@@ -7,7 +7,7 @@ export default function VideosPreview({ videos }: { videos: Video[] }) {
 
   return (
     <section className={`${hasVideos ? "py-section-gap" : "py-12 md:py-16"} px-4 md:px-gutter max-w-container-max mx-auto bg-surface-container-low/50 rounded-3xl`}>
-      <div className={`${hasVideos ? "mb-10" : ""} flex flex-col gap-4 px-4 pt-4 md:flex-row md:items-end md:justify-between`}>
+      <div className={`${hasVideos ? "mb-10" : ""} flex items-end justify-between gap-4 px-4 pt-4`}>
         <div>
           <span className="text-sm font-bold tracking-widest uppercase text-secondary">From the Kitchen</span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-primary mt-3">
@@ -17,9 +17,9 @@ export default function VideosPreview({ videos }: { videos: Video[] }) {
         <Link
           href="/videos"
           prefetch={true}
-          className="w-fit rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-on-primary"
+          className="w-fit shrink-0 whitespace-nowrap rounded-full border border-primary px-3 py-2 text-[13px] font-semibold text-primary transition-colors hover:bg-primary hover:text-on-primary sm:px-4 sm:text-sm"
         >
-          All kitchen videos
+          Watch more
         </Link>
       </div>
 

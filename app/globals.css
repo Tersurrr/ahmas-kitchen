@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 html {
+  font-size: 101%;
   scroll-behavior: smooth;
   max-width: 100%;
   overflow-x: clip;
