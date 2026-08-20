@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
         })}
       />
       <div className="max-w-3xl mx-auto px-4 md:px-gutter py-12">
-        <span className="text-xs font-bold tracking-widest uppercase text-secondary">Legal</span>
+        <span className="text-sm font-bold tracking-widest uppercase text-secondary">Legal</span>
         <h1 className="font-display text-3xl md:text-4xl font-bold text-primary mt-3 mb-2">
           Privacy Policy
         </h1>

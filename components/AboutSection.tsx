@@ -33,7 +33,7 @@ export default function AboutSection() {
           />
         </div>
         <div>
-          <span className="text-xs font-bold tracking-widest uppercase text-secondary">About Us</span>
+          <span className="text-sm font-bold tracking-widest uppercase text-secondary">About Us</span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-primary mt-3 mb-5">
             About{" "}
             <span className="font-brand font-semibold text-4xl md:text-5xl tracking-wide">
@@ -64,7 +64,7 @@ export default function AboutSection() {
       </div>
 
       <div className="text-center max-w-2xl mx-auto mb-14">
-        <span className="text-xs font-bold tracking-widest uppercase text-secondary">Why Choose Us</span>
+        <span className="text-sm font-bold tracking-widest uppercase text-secondary">Why Choose Us</span>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-primary mt-3">
           Why Choose Amahs kitchen
         </h2>

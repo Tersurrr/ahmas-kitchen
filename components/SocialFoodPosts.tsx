@@ -17,7 +17,7 @@ export default function SocialFoodPosts() {
   return (
     <section aria-labelledby="facebook-food-posts" className="mb-12">
       <div className="mb-5">
-        <span className="text-xs font-bold tracking-widest uppercase text-secondary">
+        <span className="text-sm font-bold tracking-widest uppercase text-secondary">
           On Facebook
         </span>
         <h2

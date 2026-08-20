@@ -3,7 +3,6 @@ import BottomNav from "@/components/BottomNav";
 import CartDrawer from "@/components/CartDrawer";
 import AddedToCartToast from "@/components/AddedToCartToast";
 import WelcomeNotification from "@/components/WelcomeNotification";
-import CookieConsent from "@/components/CookieConsent";
 import JsonLd from "@/components/JsonLd";
 import { siteStructuredData } from "@/lib/seo";
 
@@ -17,7 +16,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <CartDrawer />
       <AddedToCartToast />
       <WelcomeNotification />
-      <CookieConsent />
     </>
   );
 }

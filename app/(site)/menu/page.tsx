@@ -45,7 +45,7 @@ export default async function MenuPage() {
       <JsonLd data={menuStructuredData(categories, items)} />
       <div>
         <div className="max-w-container-max mx-auto px-4 md:px-gutter pt-10 pb-4">
-          <span className="text-xs font-bold tracking-widest uppercase text-secondary">Menu</span>
+          <span className="text-sm font-bold tracking-widest uppercase text-secondary">Menu</span>
           <h1 className="font-display text-3xl md:text-5xl font-bold text-primary mt-3">
             Our Full Menu
           </h1>

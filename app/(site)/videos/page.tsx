@@ -40,7 +40,7 @@ export default async function VideosPage() {
       />
       <JsonLd data={videosStructuredData(videos)} />
       <div className="max-w-container-max mx-auto px-4 md:px-gutter py-10">
-        <span className="text-xs font-bold tracking-widest uppercase text-secondary">From the Kitchen</span>
+        <span className="text-sm font-bold tracking-widest uppercase text-secondary">From the Kitchen</span>
         <h1 className="font-display text-3xl md:text-5xl font-bold text-primary mt-3 mb-3">
           Kitchen Videos
         </h1>
