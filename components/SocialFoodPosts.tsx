@@ -10,22 +10,7 @@ const foodPosts = [
 
 export default function SocialFoodPosts() {
   return (
-    <section aria-labelledby="facebook-food-posts" className="mb-12">
-      <div className="mb-5">
-        <span className="text-sm font-bold tracking-widest uppercase text-secondary">
-          On Facebook
-        </span>
-        <h2
-          id="facebook-food-posts"
-          className="mt-2 font-display text-2xl font-bold text-primary md:text-3xl"
-        >
-          More food from Amahs Kitchen
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm text-on-surface-variant">
-          These posts open directly in Facebook without slowing down this page.
-        </p>
-      </div>
-
+    <section aria-label="Facebook food posts" className="mb-12">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {foodPosts.map((post) => (
           <a
