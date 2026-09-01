@@ -1,54 +1,84 @@
-import type { Metadata } from "next";
-import Hero from "@/components/Hero";
-import BusinessOverview from "@/components/BusinessOverview";
-import HomeMenu from "@/components/HomeMenu";
-import HowItWorks from "@/components/HowItWorks";
-import VideosPreview from "@/components/VideosPreview";
-import AboutSection from "@/components/AboutSection";
-import Footer from "@/components/Footer";
-import JsonLd from "@/components/JsonLd";
-import { getCategories, getMenuItems, getVideos } from "@/lib/data";
-import { createPageMetadata, webPageStructuredData } from "@/lib/seo";
-import { siteConfig } from "@/lib/site-config";
-
-// Menu/category/video data changes rarely; revalidate once a minute instead of
-// hitting Supabase on every request (this route reads cookies via the
-// Supabase server client, which otherwise forces fully dynamic rendering).
-export const revalidate = 60;
-
-const title = "Amahs Kitchen | Authentic African Restaurant in Massachusetts";
-const description = siteConfig.ownerName
-  ? `${siteConfig.description} Founded and operated by ${siteConfig.ownerName}.`
-  : siteConfig.description;
-
-export const metadata: Metadata = createPageMetadata({
-  title,
-  description,
-  path: "/",
-  absoluteTitle: true,
-});
-
-export default async function HomePage() {
-  const [categories, items, allVideos] = await Promise.all([getCategories(), getMenuItems(), getVideos()]);
-  const videos = allVideos.filter((v) => v.video_url);
-
+export default function MaintenancePage() {
   return (
-    <>
-      <JsonLd
-        data={webPageStructuredData({
-          name: title,
-          description,
-          path: "/",
-          breadcrumbs: [{ name: "Home", path: "/" }],
-        })}
-      />
-      <Hero />
-      <BusinessOverview />
-      <HomeMenu categories={categories} items={items} />
-      <HowItWorks />
-      <VideosPreview videos={videos.slice(0, 3)} />
-      <AboutSection />
-      <Footer />
-    </>
+    <main
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px",
+        background: "#22201b",
+        color: "#f3ead6",
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <div style={{ maxWidth: "500px" }}>
+        <p
+          style={{
+            color: "#a8452f",
+            fontSize: "14px",
+            letterSpacing: "3px",
+            textTransform: "uppercase",
+          }}
+        >
+          Ahmas Kitchen
+        </p>
+
+        <h1
+          style={{
+            color: "#e8b93f",
+            fontSize: "48px",
+            marginBottom: "16px",
+          }}
+        >
+          We&apos;ll Be Back Soon
+        </h1>
+
+        <p
+          style={{
+            color: "#b9af9a",
+            fontSize: "18px",
+            lineHeight: "1.6",
+          }}
+        >
+          Our website is currently undergoing maintenance
+          <br />
+          We&apos;re working to make things better for you
+        </p>
+
+        <p style={{ marginTop: "30px" }}>
+          Need to place an order?
+        </p>
+
+        <a
+          href="https://wa.me/18572615923"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "inline-block",
+            marginTop: "10px",
+            padding: "14px 24px",
+            background: "#25D366",
+            color: "#ffffff",
+            textDecoration: "none",
+            borderRadius: "8px",
+            fontWeight: "bold",
+          }}
+        >
+          Order on WhatsApp
+        </a>
+
+        <p
+          style={{
+            marginTop: "30px",
+            color: "#8f8879",
+            fontSize: "13px",
+          }}
+        >
+          Thank you for your patience.
+        </p>
+      </div>
+    </main>
   );
 }
