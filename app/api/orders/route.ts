@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       "consume_public_order_rate_limit",
       {
         p_phone: parsed.value.phone,
-        p_ip: clientAddress(request),
+      p_ip: clientAddress(request),
       }
     );
     const limit = (Array.isArray(limitData) ? limitData[0] : limitData) as
