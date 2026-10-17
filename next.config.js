@@ -1,11 +1,28 @@
 /** @type {import('next').NextConfig} */
-const supabaseHostname = (() => {
+const supabaseUrl = (() => {
   try {
-    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "").hostname;
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "");
   } catch {
-    return "";
+    return null;
   }
 })();
+const supabaseHostname = supabaseUrl?.hostname || "";
+const supabaseOrigin = supabaseUrl?.origin || "";
+const supabaseWebSocketOrigin = supabaseUrl ? ` wss://${supabaseUrl.host}` : "";
+const publicContentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "style-src-attr 'unsafe-inline'",
+  `img-src 'self' data: blob:${supabaseOrigin} https://images.unsplash.com`,
+  `media-src 'self' blob:${supabaseOrigin}`,
+  "font-src 'self' data:",
+  `connect-src 'self'${supabaseOrigin}${supabaseWebSocketOrigin}`,
+].join("; ");
 
 const nextConfig = {
   // Keep Turbopack scoped to this project when another package-lock.json exists higher up.
@@ -31,6 +48,7 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Content-Security-Policy", value: publicContentSecurityPolicy },
         ],
       },
     ];

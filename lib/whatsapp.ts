@@ -15,8 +15,6 @@ export type CheckoutDetails = {
   phone: string;
   address: string;
   fulfillment: FulfillmentType;
-  date: string;
-  time: string;
   instructions: string;
 };
 
@@ -46,9 +44,6 @@ export function buildWhatsAppMessage(
   if (details.fulfillment === "delivery" && details.address) {
     lines.push(`*Address:* ${messageValue(details.address)}`);
   }
-  if (details.date) lines.push(`*Preferred Date:* ${messageValue(details.date)}`);
-  if (details.time) lines.push(`*Preferred Time:* ${messageValue(details.time)}`);
-
   lines.push("", "*Order Items:*");
   items.forEach((item) => {
     const label = item.optionName

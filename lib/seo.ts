@@ -334,10 +334,17 @@ function offersForMenuItem(item: MenuItem) {
 }
 
 export function menuStructuredData(categories: Category[], items: MenuItem[]) {
+  const itemsByCategory = new Map<string, MenuItem[]>();
+  for (const item of items) {
+    if (!item.category_id) continue;
+    const categoryItems = itemsByCategory.get(item.category_id) ?? [];
+    categoryItems.push(item);
+    itemsByCategory.set(item.category_id, categoryItems);
+  }
   const sections = categories
     .map((category) => ({
       category,
-      items: items.filter((item) => item.category_id === category.id),
+      items: itemsByCategory.get(category.id) ?? [],
     }))
     .filter((section) => section.items.length > 0);
   const categorizedIds = new Set(

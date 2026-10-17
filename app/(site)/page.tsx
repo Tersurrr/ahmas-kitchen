@@ -31,6 +31,35 @@ export const metadata: Metadata = createPageMetadata({
 export default async function HomePage() {
   const [categories, items, allVideos] = await Promise.all([getCategories(), getMenuItems(), getVideos()]);
   const videos = allVideos.filter((v) => v.video_url);
+  const itemsByCategory = new Map<string, typeof items>();
+  for (const item of items) {
+    if (!item.category_id) continue;
+    const categoryItems = itemsByCategory.get(item.category_id) ?? [];
+    categoryItems.push(item);
+    itemsByCategory.set(item.category_id, categoryItems);
+  }
+  const compactItems = (categoryItems: typeof items) =>
+    categoryItems.slice(0, 4).map((item) => ({
+      ...item,
+      menu_images: item.menu_images?.slice(0, 1),
+      categories: undefined,
+    }));
+  const knownCategoryIds = new Set(categories.map((category) => category.id));
+  const homeSections = categories
+    .map((category) => ({
+      category,
+      items: compactItems(itemsByCategory.get(category.id) ?? []),
+    }))
+    .filter((section) => section.items.length > 0);
+  const otherItems = compactItems(
+    items.filter((item) => !item.category_id || !knownCategoryIds.has(item.category_id)),
+  );
+  if (otherItems.length > 0) {
+    homeSections.push({
+      category: { id: "other-menu-items", name: "More from the Menu", slug: "more", sort_order: Number.MAX_SAFE_INTEGER },
+      items: otherItems,
+    });
+  }
 
   return (
     <>
@@ -44,11 +73,13 @@ export default async function HomePage() {
       />
       <Hero />
       <BusinessOverview />
-      <HomeMenu categories={categories} items={items} />
-      <HowItWorks />
-      <VideosPreview videos={videos.slice(0, 3)} />
-      <AboutSection />
-      <Footer />
+      <div className="cabinet-content">
+        <HomeMenu sections={homeSections} />
+        <HowItWorks />
+        <VideosPreview videos={videos.slice(0, 3)} />
+        <AboutSection />
+        <Footer />
+      </div>
     </>
   );
 }

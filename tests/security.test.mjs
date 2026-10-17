@@ -79,8 +79,6 @@ test("WhatsApp output includes the server reference and flattens injected lines"
       phone: "+15555550123",
       address: "",
       fulfillment: "pickup",
-      date: "",
-      time: "",
       instructions: "Call\nfirst",
     },
     [
@@ -98,7 +96,14 @@ test("WhatsApp output includes the server reference and flattens injected lines"
   assert.match(message, /\*Order Reference:\* order-123/);
   assert.match(message, /\*Name:\* Jane \*Total:\* \$0/);
   assert.doesNotMatch(message, /Jane\n/);
+  assert.doesNotMatch(message, /Preferred\s+(Date|Time)/i);
   assert.match(message, /\*Total: \$40\.00\*/);
+});
+
+test("checkout no longer collects or sends preferred date or time", async () => {
+  const checkout = await readFile(new URL("../components/CheckoutModal.tsx", import.meta.url), "utf8");
+  assert.doesNotMatch(checkout, /Preferred\s+(Date|Time)/i);
+  assert.doesNotMatch(checkout, /type=["'](?:date|time)["']/i);
 });
 
 test("security-sensitive implementation regressions stay closed", async () => {

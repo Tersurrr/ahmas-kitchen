@@ -26,6 +26,13 @@ export default async function MenuPage() {
   const [categories, items] = await Promise.all([getCategories(), getMenuItems()]);
   const primaryMenuImage = items.find((item) => item.menu_images?.[0]?.url)
     ?.menu_images?.[0]?.url;
+  const itemsByCategory = new Map<string, typeof items>();
+  for (const item of items) {
+    if (!item.category_id) continue;
+    const categoryItems = itemsByCategory.get(item.category_id) ?? [];
+    categoryItems.push(item);
+    itemsByCategory.set(item.category_id, categoryItems);
+  }
 
   return (
     <>
@@ -43,7 +50,6 @@ export default async function MenuPage() {
         })}
       />
       <JsonLd data={menuStructuredData(categories, items)} />
-      <div>
         <div className="max-w-container-max mx-auto px-4 md:px-gutter pt-10 pb-4">
           <span className="text-sm font-bold tracking-widest uppercase text-secondary">Menu</span>
           <h1 className="font-display text-3xl md:text-5xl font-bold text-primary mt-3">
@@ -63,7 +69,7 @@ export default async function MenuPage() {
             </p>
           ) : (
             categories.map((category) => {
-              const categoryItems = items.filter((item) => item.category_id === category.id);
+              const categoryItems = itemsByCategory.get(category.id) ?? [];
               if (categoryItems.length === 0) return null;
 
               return (
@@ -81,7 +87,6 @@ export default async function MenuPage() {
             })
           )}
         </div>
-      </div>
     </>
   );
 }

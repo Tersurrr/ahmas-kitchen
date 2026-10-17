@@ -9,22 +9,12 @@ import { useCart } from "@/store/cart";
 import FoodModal from "./FoodModal";
 import MenuCard from "./MenuCard";
 
-export default function HomeMenu({ categories, items }: { categories: Category[]; items: MenuItem[] }) {
+type HomeMenuSection = { category: Category; items: MenuItem[] };
+
+export default function HomeMenu({ sections }: { sections: HomeMenuSection[] }) {
   const addItem = useCart((state) => state.addItem);
   const [optionItem, setOptionItem] = useState<MenuItem | null>(null);
-  const hasItems = items.length > 0;
-
-  const sections = categories
-    .map((category) => ({ category, items: items.filter((item) => item.category_id === category.id) }))
-    .filter((section) => section.items.length > 0);
-  const categorizedItemIds = new Set(sections.flatMap((section) => section.items.map((item) => item.id)));
-  const remainingItems = items.filter((item) => !categorizedItemIds.has(item.id));
-  if (remainingItems.length > 0) {
-    sections.push({
-      category: { id: "other-menu-items", name: "More from the Menu", slug: "more", sort_order: Number.MAX_SAFE_INTEGER },
-      items: remainingItems,
-    });
-  }
+  const hasItems = sections.length > 0;
 
   function quickAdd(item: MenuItem) {
     if (requiresOptionSelection(item)) {

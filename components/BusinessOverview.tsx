@@ -1,24 +1,5 @@
 import Link from "next/link";
 
-const overviewItems = [
-  {
-    term: "What we serve",
-    detail: "Freshly prepared, authentic African meals made with quality ingredients.",
-  },
-  {
-    term: "Service area",
-    detail: "Pickup, delivery, and food service across Massachusetts.",
-  },
-  {
-    term: "Catering",
-    detail: "African food for birthdays, weddings, celebrations, and special events.",
-  },
-  {
-    term: "Business hours",
-    detail: "Open Tuesday through Sunday. Pickup 11am–7pm; delivery 12pm–6pm.",
-  },
-] as const;
-
 export default function BusinessOverview() {
   return (
     <section
@@ -43,23 +24,6 @@ export default function BusinessOverview() {
             the kitchen through WhatsApp.
           </p>
         </div>
-
-        <dl className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {overviewItems.map((item) => (
-            <div
-              key={item.term}
-              className="rounded-xl border border-outline-variant/30 bg-surface-container-low p-5"
-            >
-              <dt className="flex items-center gap-3 font-display text-lg font-semibold text-primary">
-                <span className="h-5 w-1 rounded-full bg-secondary/70" aria-hidden="true" />
-                {item.term}
-              </dt>
-              <dd className="mt-2 text-sm leading-relaxed text-on-surface-variant">
-                {item.detail}
-              </dd>
-            </div>
-          ))}
-        </dl>
 
         <div className="mt-7">
           <Link

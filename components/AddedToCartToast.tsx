@@ -25,14 +25,16 @@ export default function AddedToCartToast() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.25 }}
+          role={lastAdded.error ? "alert" : "status"}
+          aria-live="polite"
           className="pointer-events-none fixed inset-x-3 bottom-20 z-[65] flex justify-center md:bottom-6"
         >
-          <div className="pointer-events-auto flex max-w-full items-center gap-2 rounded-full bg-primary py-2 pl-3 pr-2 text-on-primary shadow-modal sm:gap-3 sm:pl-4">
-            <CheckCircle2 size={18} className="shrink-0 text-secondary" />
+          <div className={`pointer-events-auto flex max-w-full items-center gap-2 rounded-full py-2 pl-3 pr-2 text-on-primary shadow-modal sm:gap-3 sm:pl-4 ${lastAdded.error ? "bg-red-800" : "bg-primary"}`}>
+            {!lastAdded.error && <CheckCircle2 size={18} className="shrink-0 text-secondary" />}
             <span className="min-w-0 truncate text-sm font-medium">
-              Added {lastAdded.name} to cart
+              {lastAdded.message}
             </span>
-            <button
+            {!lastAdded.error && <button
               onClick={() => {
                 openCart();
                 setVisible(false);
@@ -40,7 +42,7 @@ export default function AddedToCartToast() {
               className="shrink-0 whitespace-nowrap rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-white/25"
             >
               View Cart
-            </button>
+            </button>}
           </div>
         </motion.div>
       )}

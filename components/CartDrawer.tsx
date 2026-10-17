@@ -8,6 +8,7 @@ import { formatCurrency } from "@/lib/whatsapp";
 import { useState } from "react";
 
 import CheckoutModal from "./CheckoutModal";
+import { MAX_ITEM_QUANTITY, MAX_ORDER_LINES } from "@/lib/order-validation";
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, increment, decrement, removeItem, subtotal } = useCart();
@@ -26,6 +27,9 @@ export default function CartDrawer() {
               onClick={closeCart}
             />
             <motion.aside
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cart-title"
               className="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-surface z-[90] flex flex-col shadow-modal"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -33,7 +37,7 @@ export default function CartDrawer() {
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
             >
               <div className="flex items-center justify-between px-6 py-5 border-b border-outline-variant/20">
-                <h2 className="font-display text-xl font-bold text-primary">Your Cart</h2>
+                <h2 id="cart-title" className="font-display text-xl font-bold text-primary">Your Cart</h2>
                 <button onClick={closeCart} aria-label="Close cart" className="p-2 hover:bg-surface-container rounded-full">
                   <X size={20} />
                 </button>
@@ -48,7 +52,7 @@ export default function CartDrawer() {
                 ) : (
                   <ul className="space-y-5">
                     {items.map((item) => (
-                      <li key={`${item.menuItemId}::${item.optionId ?? "none"}`} className="flex gap-4">
+                      <li key={JSON.stringify([item.menuItemId, item.optionId, item.specialInstructions || ""])} className="flex gap-4">
                         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-surface-container-high">
                           {item.image && (
                             <Image
@@ -64,7 +68,7 @@ export default function CartDrawer() {
                           <div className="flex justify-between">
                             <p className="font-semibold text-sm text-on-surface">{item.name}</p>
                             <button
-                              onClick={() => removeItem(item.menuItemId, item.optionId)}
+                              onClick={() => removeItem(item.menuItemId, item.optionId, item.specialInstructions)}
                               aria-label={`Remove ${item.name}`}
                               className="text-on-surface-variant hover:text-red-600 transition-colors"
                             >
@@ -79,11 +83,11 @@ export default function CartDrawer() {
                           )}
                           <div className="flex items-center justify-between mt-2">
                             <div className="flex items-center gap-3 bg-surface-container-low rounded-full px-2 py-1">
-                              <button onClick={() => decrement(item.menuItemId, item.optionId)} aria-label="Decrease quantity" className="p-1 hover:bg-surface-container rounded-full">
+                              <button onClick={() => decrement(item.menuItemId, item.optionId, item.specialInstructions)} aria-label={`Decrease ${item.name} quantity`} className="p-1 hover:bg-surface-container rounded-full">
                                 <Minus size={14} />
                               </button>
                               <span className="text-sm w-4 text-center">{item.quantity}</span>
-                              <button onClick={() => increment(item.menuItemId, item.optionId)} aria-label="Increase quantity" className="p-1 hover:bg-surface-container rounded-full">
+                              <button onClick={() => increment(item.menuItemId, item.optionId, item.specialInstructions)} disabled={item.quantity >= MAX_ITEM_QUANTITY} aria-label={`Increase ${item.name} quantity`} className="p-1 hover:bg-surface-container rounded-full disabled:cursor-not-allowed disabled:opacity-40">
                                 <Plus size={14} />
                               </button>
                             </div>
@@ -98,6 +102,11 @@ export default function CartDrawer() {
                 )}
               </div>
 
+              {items.length > MAX_ORDER_LINES && (
+                <p role="alert" className="border-t border-outline-variant/20 px-6 pt-4 text-sm text-red-700">
+                  Orders can include up to {MAX_ORDER_LINES} different items. Remove an item to continue.
+                </p>
+              )}
               {items.length > 0 && (
                 <div className="border-t border-outline-variant/20 px-6 py-5 space-y-4">
                   <div className="flex justify-between text-sm">
@@ -106,7 +115,8 @@ export default function CartDrawer() {
                   </div>
                   <button
                     onClick={() => setCheckoutOpen(true)}
-                    className="w-full py-3.5 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-dark transition-colors active:scale-[0.98]"
+                    disabled={items.length > MAX_ORDER_LINES}
+                    className="w-full py-3.5 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-dark transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Proceed to Checkout
                   </button>

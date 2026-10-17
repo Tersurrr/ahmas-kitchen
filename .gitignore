@@ -1,5 +1,12 @@
 node_modules/
 .next/
+.next-*/
 .env
 .env.local
 env.download
+
+# Local Netlify folder
+.netlify
+
+# Cabinet Grotesk is fetched from Fontshare during builds under its ITF license.
+public/fonts/CabinetGrotesk-Variable.woff2

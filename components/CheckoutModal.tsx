@@ -28,8 +28,6 @@ export default function CheckoutModal({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [instructions, setInstructions] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -63,8 +61,6 @@ export default function CheckoutModal({
       phone,
       address,
       fulfillment,
-      date,
-      time,
       instructions,
     };
     const controller = new AbortController();
@@ -126,6 +122,9 @@ export default function CheckoutModal({
             onClick={onClose}
           />
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="checkout-title"
             className="fixed inset-x-0 bottom-0 md:inset-0 md:m-auto md:max-w-lg md:h-fit z-[90] bg-surface rounded-t-2xl md:rounded-2xl shadow-modal max-h-[90vh] overflow-y-auto"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
@@ -133,7 +132,7 @@ export default function CheckoutModal({
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
           >
             <div className="flex items-center justify-between px-6 py-5 border-b border-outline-variant/20 sticky top-0 bg-surface z-10">
-              <h2 className="font-display text-xl font-bold text-primary">Checkout</h2>
+              <h2 id="checkout-title" className="font-display text-xl font-bold text-primary">Checkout</h2>
               <button onClick={onClose} aria-label="Close" className="p-2 hover:bg-surface-container rounded-full">
                 <X size={20} />
               </button>
@@ -143,6 +142,7 @@ export default function CheckoutModal({
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
+                  aria-pressed={fulfillment === "pickup"}
                   onClick={() => setFulfillment("pickup")}
                   className={`py-3 rounded-lg border text-sm font-semibold transition-colors ${
                     fulfillment === "pickup"
@@ -154,6 +154,7 @@ export default function CheckoutModal({
                 </button>
                 <button
                   type="button"
+                  aria-pressed={fulfillment === "delivery"}
                   onClick={() => setFulfillment("delivery")}
                   className={`py-3 rounded-lg border text-sm font-semibold transition-colors ${
                     fulfillment === "delivery"
@@ -165,20 +166,17 @@ export default function CheckoutModal({
                 </button>
               </div>
 
-              <Field label="Full Name" value={name} onChange={setName} placeholder="Jane Doe" required />
-              <Field label="Phone Number" value={phone} onChange={setPhone} placeholder="(555) 555-5555" type="tel" required />
+              <Field id="checkout-name" label="Full Name" value={name} onChange={setName} placeholder="Jane Doe" required />
+              <Field id="checkout-phone" label="Phone Number" value={phone} onChange={setPhone} placeholder="(555) 555-5555" type="tel" required />
               {fulfillment === "delivery" && (
-                <Field label="Delivery Address" value={address} onChange={setAddress} placeholder="Street, City, State, ZIP" required />
+                <Field id="checkout-address" label="Delivery Address" value={address} onChange={setAddress} placeholder="Street, City, State, ZIP" required />
               )}
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Preferred Date" value={date} onChange={setDate} type="date" />
-                <Field label="Preferred Time" value={time} onChange={setTime} type="time" />
-              </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
+                <label htmlFor="checkout-instructions" className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
                   Special Instructions
                 </label>
                 <textarea
+                  id="checkout-instructions"
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
                   rows={3}
@@ -193,7 +191,7 @@ export default function CheckoutModal({
                   Order Summary
                 </p>
                 {items.map((i) => (
-                  <div key={`${i.menuItemId}::${i.optionId ?? "none"}`} className="flex justify-between text-sm">
+                  <div key={JSON.stringify([i.menuItemId, i.optionId, i.specialInstructions || ""])} className="flex justify-between text-sm">
                     <span>
                       {i.quantity} x {i.name}
                       {i.optionName && <span className="text-on-surface-variant"> ({i.optionName})</span>}
@@ -207,7 +205,7 @@ export default function CheckoutModal({
                 </div>
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
               <button
                 onClick={handlePlaceOrder}
@@ -234,6 +232,7 @@ function Field({
   placeholder,
   type = "text",
   required,
+  id,
 }: {
   label: string;
   value: string;
@@ -241,19 +240,21 @@ function Field({
   placeholder?: string;
   type?: string;
   required?: boolean;
+  id: string;
 }) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
+      <label htmlFor={id} className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
         {label}{required && <span className="text-secondary"> *</span>}
       </label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        maxLength={type === "tel" ? 30 : type === "date" || type === "time" ? undefined : 100}
+        maxLength={type === "tel" ? 30 : 100}
         className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
       />
     </div>

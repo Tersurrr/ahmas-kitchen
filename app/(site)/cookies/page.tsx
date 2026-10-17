@@ -51,8 +51,8 @@ export default function CookieNoticePage() {
         <Section title="What this covers">
           <p>
             This page explains the cookies and browser storage this site uses. When you
-            first visit, we show a short notice about this so you&rsquo;re aware dismissing
-            it just hides the notice and doesn&rsquo;t change how the site works.
+            first visit, we show a short notice so you&rsquo;re aware of this storage. Dismissing
+            the notice only hides it and doesn&rsquo;t change how the site works.
           </p>
         </Section>
 
@@ -67,10 +67,10 @@ export default function CookieNoticePage() {
 
         <Section title="Managing cookies">
           <p>
-            TheWhat this coversse cookies are necessary for the site&rsquo;s cart and sign-in features to work.
+            These cookies are necessary for the site&rsquo;s cart and sign-in features to work.
             If you&rsquo;d like to clear them, you can do so at any time through your browser&rsquo;s
             settings (usually under &quot;Clear browsing data&quot; or &quot;Site settings&quot;). Clearing
-            them will empty your cart and sign you out of the admin dashboard if you&rsquo;re signed in
+            them will empty your cart and sign you out of the admin dashboard if you&rsquo;re signed in.
           </p>
         </Section>
 

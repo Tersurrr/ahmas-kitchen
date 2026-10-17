@@ -18,6 +18,23 @@ body {
   color: #1c1b1b;
 }
 
+/* Cabinet Grotesk from Fontshare / Indian Type Foundry, served locally. */
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Start the alternate typeface at the homepage menu and carry it to the footer. */
+.cabinet-content {
+  font-family: "Cabinet Grotesk", sans-serif;
+}
+.cabinet-content .font-display {
+  font-family: "Cabinet Grotesk", sans-serif;
+}
+
 /* Subtle African-inspired geometric texture used as a low-opacity background accent */
 .heritage-pattern {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30l15-15v30L30 30zm0 0L15 15v30l15-15z' fill='%234E342E' fill-opacity='0.035' fill-rule='evenodd'/%3E%3C/svg%3E");

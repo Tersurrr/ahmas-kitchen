@@ -26,7 +26,7 @@ export async function getCategories(): Promise<Category[]> {
   try {
     const { data, error } = await publicSupabase
       .from("categories")
-      .select("*")
+      .select("id, name, slug, sort_order")
       .order("sort_order", { ascending: true });
     if (error || !data) return [];
     return data as Category[];
@@ -40,7 +40,9 @@ export async function getMenuItems(): Promise<MenuItem[]> {
   try {
     const { data, error } = await publicSupabase
       .from("menu_items")
-      .select("*, menu_images(*), categories(*), menu_item_options(*)")
+      .select(
+        "id, name, description, ingredients, price, category_id, is_featured, is_available, sort_order, menu_images(id, menu_item_id, url, sort_order), menu_item_options(id, menu_item_id, name, price, sort_order, is_default)"
+      )
       .order("sort_order", { ascending: true })
       .order("sort_order", { ascending: true, referencedTable: "menu_item_options" });
     if (error || !data) return [];
@@ -61,7 +63,7 @@ export async function getVideos(): Promise<Video[]> {
   try {
     const { data, error } = await publicSupabase
       .from("videos")
-      .select("*")
+      .select("id, title, description, video_url, thumbnail_url, sort_order, created_at")
       .order("sort_order", { ascending: true });
     if (error || !data) return [];
     return data as Video[];

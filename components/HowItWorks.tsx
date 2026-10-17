@@ -3,7 +3,7 @@ import { UtensilsCrossed, MousePointerClick, ClipboardList, MessageCircle, Badge
 const steps = [
   { icon: UtensilsCrossed, title: "Browse the Menu", description: "Explore our full menu of authentic African dishes online" },
   { icon: MousePointerClick, title: "Select & Order", description: "Choose your favorite dishes and click Order Now" },
-  { icon: ClipboardList, title: "Share Your Details", description: "Enter your name, address, phone number, and any special instructions" },
+  { icon: ClipboardList, title: "Share Your Details", description: "Enter your name and phone number, plus a delivery address when needed and any special instructions" },
   { icon: MessageCircle, title: "Sent to WhatsApp", description: "Your order goes straight to Amahs Kitchen via WhatsApp" },
   { icon: BadgeCheck, title: "Confirmation & Payment", description: "We confirm availability and send payment options Cash App, Zelle, Stripe, or Apple Pay" },
   { icon: ChefHat, title: "Freshly Prepared", description: "Once payment is confirmed, your meal is freshly prepared" },

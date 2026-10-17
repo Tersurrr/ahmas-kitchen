@@ -15,24 +15,29 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const response = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const result = await response.json().catch(() => ({}));
-    setLoading(false);
-    if (!response.ok) {
-      const retryAfter = Number(response.headers.get("Retry-After"));
-      setError(
-        response.status === 429 && Number.isFinite(retryAfter) && retryAfter > 0
-          ? `Too many sign-in attempts. Please try again in ${Math.ceil(retryAfter / 60)} minute(s).`
-          : result.error || "Unable to sign in. Please try again."
-      );
-      return;
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const retryAfter = Number(response.headers.get("Retry-After"));
+        setError(
+          response.status === 429 && Number.isFinite(retryAfter) && retryAfter > 0
+            ? `Too many sign-in attempts. Please try again in ${Math.ceil(retryAfter / 60)} minute(s).`
+            : result.error || "Unable to sign in. Please try again."
+        );
+        return;
+      }
+      router.push("/admin");
+      router.refresh();
+    } catch {
+      setError("Unable to reach the sign-in service. Check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
-    router.push("/admin");
-    router.refresh();
   }
 
   return (
@@ -48,11 +53,12 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
+            <label htmlFor="admin-email" className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
               Email
             </label>
             <input
               type="email"
+              id="admin-email"
               autoComplete="email"
               required
               value={email}
@@ -61,11 +67,12 @@ export default function AdminLoginPage() {
             />
           </div>
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
+            <label htmlFor="admin-password" className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1.5 block">
               Password
             </label>
             <input
               type="password"
+              id="admin-password"
               autoComplete="current-password"
               required
               value={password}
@@ -74,7 +81,7 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
           <button
             type="submit"

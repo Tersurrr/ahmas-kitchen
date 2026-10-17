@@ -25,8 +25,11 @@ function noStore(status: number, body: Record<string, unknown>, retryAfter?: num
 function hasSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return true;
+  const host =
+    request.headers.get("x-forwarded-host") || request.headers.get("host");
+  if (!host) return false;
   try {
-    return new URL(origin).host === new URL(request.url).host;
+    return new URL(origin).host === host;
   } catch {
     return false;
   }
@@ -60,6 +63,10 @@ export async function POST(request: Request) {
 
   if (!email || email.length > 254 || !password || password.length > 1024) {
     return noStore(400, { error: "Invalid email or password." });
+  }
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return noStore(503, { error: "Sign-in is temporarily unavailable. Please try again shortly." });
   }
 
   const cookiesToSet: { name: string; value: string; options: CookieOptions }[] = [];
@@ -110,9 +117,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  let signInError: unknown;
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    signInError = error;
+  } catch {
+    return noStore(503, { error: "Sign-in is temporarily unavailable. Please try again shortly." });
+  }
 
-  if (error) {
+  if (signInError) {
     // Do not expose whether an email address exists or Supabase implementation details.
     return noStore(401, { error: "Invalid email or password." });
   }

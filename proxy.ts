@@ -75,6 +75,15 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  // An incomplete local or production setup should fail closed with a usable
+  // sign-in page instead of throwing while constructing the Supabase client.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    const loginUrl = new URL("/admin/login", request.url);
+    const redirect = NextResponse.redirect(loginUrl);
+    redirect.headers.set("Content-Security-Policy", csp);
+    return redirect;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -120,5 +129,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin/:path*"],
 };
