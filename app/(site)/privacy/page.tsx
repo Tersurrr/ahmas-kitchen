@@ -59,7 +59,7 @@ export default function PrivacyPolicyPage() {
         </Section>
 
         <Section title="Information we collect">
-          <p><strong>Order details you provide.</strong> When you check out, we collect your name and phone number, the dishes and quantities in your order, any special instructions, and a delivery address for delivery orders so we can process and fulfill your order.</p>
+          <p><strong>Order details you provide.</strong> When you check out, we collect your name, the dishes and quantities in your order, any special instructions, and a delivery address for delivery orders so we can process and fulfill your order.</p>
           <p><strong>Cart and site preferences.</strong> Your cart contents and a few simple preferences (like whether you&rsquo;ve seen our welcome message or cookie notice) are stored directly in your browser&rsquo;s local storage. This stays on your device and is not sent to us until you check out.</p>
           <p><strong>Admin access.</strong> If you are a staff member logging into the admin dashboard, an authentication cookie keeps you securely signed in.</p>
         </Section>
@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
         <Section title="How we use your information">
           <ul className="list-disc pl-5 space-y-1">
             <li>To process, confirm, and fulfill your pickup or delivery order</li>
-            <li>To contact you about your order (by phone or WhatsApp) if something needs clarifying</li>
+            <li>To clarify order details through the WhatsApp conversation you use to send the order</li>
             <li>To provide customer support if you reach out with a question</li>
             <li>To keep basic order records for accounting and food-safety purposes</li>
           </ul>

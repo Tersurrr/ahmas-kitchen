@@ -15,7 +15,7 @@ export type ValidatedOrderItem = {
 
 export type ValidatedOrderRequest = {
   name: string;
-  phone: string;
+  phone: string | null;
   address: string | null;
   fulfillment: "pickup" | "delivery";
   date: string | null;
@@ -57,7 +57,7 @@ export function validateOrderRequest(input: unknown): OrderValidationResult {
   if (!body) return { ok: false, error: "Invalid order request." };
 
   const name = cleanSingleLine(body.name, 100);
-  const phone = cleanSingleLine(body.phone, 30);
+  const phone = cleanOptionalLine(body.phone, 30);
   const fulfillment =
     body.fulfillment === "pickup" || body.fulfillment === "delivery"
       ? body.fulfillment
@@ -67,18 +67,19 @@ export function validateOrderRequest(input: unknown): OrderValidationResult {
   const time = cleanOptionalLine(body.time, 5);
   const instructions = cleanOptionalLine(body.instructions, 500);
 
-  if (!name || !phone || !fulfillment) {
+  if (!name || !fulfillment) {
     return { ok: false, error: "Please provide valid contact and fulfillment details." };
   }
   if (
     (hasValue(body.address) && !address) ||
+    (hasValue(body.phone) && !phone) ||
     (hasValue(body.date) && !date) ||
     (hasValue(body.time) && !time) ||
     (hasValue(body.instructions) && !instructions)
   ) {
     return { ok: false, error: "One or more order details are too long or invalid." };
   }
-  if (!/^[+\d().\-\s]+$/.test(phone) || (phone.match(/\d/g) || []).length < 7) {
+  if (phone && (!/^[+\d().\-\s]+$/.test(phone) || (phone.match(/\d/g) || []).length < 7)) {
     return { ok: false, error: "Please provide a valid phone number." };
   }
   if (fulfillment === "delivery" && !address) {

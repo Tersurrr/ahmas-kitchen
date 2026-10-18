@@ -62,6 +62,26 @@ test("pickup orders discard a supplied address", () => {
   if (result.ok) assert.equal(result.value.address, null);
 });
 
+test("pickup orders do not require or retain a customer phone number", () => {
+  const result = validateOrderRequest({
+    ...validRequest,
+    fulfillment: "pickup",
+    phone: undefined,
+    address: "",
+    date: undefined,
+    time: undefined,
+  });
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.value.phone, null);
+});
+
+test("delivery orders do not require a customer phone number", () => {
+  const result = validateOrderRequest({ ...validRequest, phone: undefined });
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.value.phone, null);
+  assert.equal(validateOrderRequest({ ...validRequest, phone: "not a number" }).ok, false);
+});
+
 test("CSV cells neutralize spreadsheet formulas and preserve quoting", () => {
   assert.equal(
     escapeCsvCell('=HYPERLINK("https://evil.test")'),
@@ -100,19 +120,84 @@ test("WhatsApp output includes the server reference and flattens injected lines"
   assert.match(message, /\*Total: \$40\.00\*/);
 });
 
-test("checkout no longer collects or sends preferred date or time", async () => {
-  const checkout = await readFile(new URL("../components/CheckoutModal.tsx", import.meta.url), "utf8");
+test("pickup WhatsApp orders omit the phone number", () => {
+  const message = buildWhatsAppMessage(
+    {
+      name: "Jane Doe",
+      phone: null,
+      address: "",
+      fulfillment: "pickup",
+      instructions: "",
+    },
+    [
+      {
+        menuItemId: validRequest.items[0].menuItemId,
+        optionId: null,
+        name: "Jollof Rice",
+        price: 20,
+        quantity: 1,
+      },
+    ]
+  );
+  assert.match(message, /\*Name:\* Jane Doe/);
+  assert.match(message, /\*Fulfillment:\* Pickup/);
+  assert.doesNotMatch(message, /\*Phone:\*/);
+});
+
+test("delivery WhatsApp orders omit the phone number and retain the address", () => {
+  const message = buildWhatsAppMessage(
+    {
+      name: "Jane Doe",
+      phone: null,
+      address: "12 Main Street",
+      fulfillment: "delivery",
+      instructions: "",
+    },
+    [
+      {
+        menuItemId: validRequest.items[0].menuItemId,
+        optionId: null,
+        name: "Jollof Rice",
+        price: 20,
+        quantity: 1,
+      },
+    ]
+  );
+  assert.match(message, /\*Fulfillment:\* Delivery/);
+  assert.match(message, /\*Address:\* 12 Main Street/);
+  assert.doesNotMatch(message, /\*Phone:\*/);
+});
+
+test("checkout no longer collects a phone number or preferred date or time", async () => {
+  const [checkout, howItWorks] = await Promise.all([
+    readFile(new URL("../components/CheckoutModal.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/HowItWorks.tsx", import.meta.url), "utf8"),
+  ]);
   assert.doesNotMatch(checkout, /Preferred\s+(Date|Time)/i);
   assert.doesNotMatch(checkout, /type=["'](?:date|time)["']/i);
+  assert.doesNotMatch(checkout, /Phone Number|checkout-phone/);
+  assert.doesNotMatch(howItWorks, /phone number/i);
+});
+
+test("the full menu page uses the homepage menu font scope", async () => {
+  const menuPage = await readFile(new URL("../app/(site)/menu/page.tsx", import.meta.url), "utf8");
+  assert.match(menuPage, /className="cabinet-content"/);
 });
 
 test("security-sensitive implementation regressions stay closed", async () => {
-  const [checkout, proxy, migration, packageJson] = await Promise.all([
+  const [checkout, proxy, migration, checkoutMigration, packageJson] = await Promise.all([
     readFile(new URL("../components/CheckoutModal.tsx", import.meta.url), "utf8"),
     readFile(new URL("../proxy.ts", import.meta.url), "utf8"),
     readFile(
       new URL(
         "../supabase/migrations/20260724120000_security_hardening_and_order_rpc.sql",
+        import.meta.url
+      ),
+      "utf8"
+    ),
+    readFile(
+      new URL(
+        "../supabase/migrations/20261018120000_checkout_phone_optional.sql",
         import.meta.url
       ),
       "utf8"
@@ -124,5 +209,7 @@ test("security-sensitive implementation regressions stay closed", async () => {
   assert.doesNotMatch(proxy, /x-amahs-admin-(login|protected)/);
   assert.match(migration, /grant execute[\s\S]+create_public_order[\s\S]+service_role/i);
   assert.match(migration, /_private_select_guard/);
+  assert.doesNotMatch(checkoutMigration, /delivery phone required/i);
+  assert.match(checkoutMigration, /delivery address required/i);
   assert.equal(JSON.parse(packageJson).scripts.lint, "eslint . --max-warnings=0");
 });

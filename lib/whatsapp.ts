@@ -12,7 +12,7 @@ export function formatCurrency(amount: number) {
 
 export type CheckoutDetails = {
   name: string;
-  phone: string;
+  phone: string | null;
   address: string;
   fulfillment: FulfillmentType;
   instructions: string;
@@ -37,7 +37,7 @@ export function buildWhatsAppMessage(
     "",
     ...(orderReference ? [`*Order Reference:* ${messageValue(orderReference)}`] : []),
     `*Name:* ${messageValue(details.name)}`,
-    `*Phone:* ${messageValue(details.phone)}`,
+    ...(details.phone ? [`*Phone:* ${messageValue(details.phone)}`] : []),
     `*Fulfillment:* ${details.fulfillment === "delivery" ? "Delivery" : "Pickup"}`,
   ];
 

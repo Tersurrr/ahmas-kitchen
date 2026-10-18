@@ -26,7 +26,6 @@ export default function CheckoutModal({
   const { items, subtotal, clear } = useCart();
   const [fulfillment, setFulfillment] = useState<FulfillmentType>("pickup");
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [instructions, setInstructions] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -34,7 +33,6 @@ export default function CheckoutModal({
 
   const canSubmit =
     name.trim() &&
-    phone.trim() &&
     (fulfillment === "pickup" || address.trim()) &&
     items.length > 0 &&
     !submitting;
@@ -43,7 +41,6 @@ export default function CheckoutModal({
     if (!canSubmit) return;
     if (
       name.trim().length > 100 ||
-      phone.trim().length > 30 ||
       address.trim().length > 250 ||
       instructions.trim().length > 500
     ) {
@@ -58,7 +55,7 @@ export default function CheckoutModal({
 
     const details = {
       name,
-      phone,
+      phone: null,
       address,
       fulfillment,
       instructions,
@@ -167,7 +164,6 @@ export default function CheckoutModal({
               </div>
 
               <Field id="checkout-name" label="Full Name" value={name} onChange={setName} placeholder="Jane Doe" required />
-              <Field id="checkout-phone" label="Phone Number" value={phone} onChange={setPhone} placeholder="(555) 555-5555" type="tel" required />
               {fulfillment === "delivery" && (
                 <Field id="checkout-address" label="Delivery Address" value={address} onChange={setAddress} placeholder="Street, City, State, ZIP" required />
               )}
