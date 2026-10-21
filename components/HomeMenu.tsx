@@ -36,7 +36,7 @@ export default function HomeMenu({ sections }: { sections: HomeMenuSection[] }) 
   return (
     <section
       id="menu"
-      className={`max-w-container-max mx-auto px-4 md:px-gutter ${hasItems ? "py-section-gap" : "py-12 md:py-16"}`}
+      className={`max-w-container-max mx-auto px-4 md:px-gutter ${hasItems ? "pt-16 pb-section-gap md:pt-12" : "pt-8 pb-12 md:pt-10 md:pb-16"}`}
     >
       <div className={`flex items-end justify-between gap-4 ${hasItems ? "mb-10" : ""}`}>
         <div>

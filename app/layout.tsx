@@ -73,10 +73,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/amahs-kitchen-social-card.jpg",
+        url: "/images/amahs-kitchen-social-food.jpg",
         width: 1200,
         height: 630,
-        alt: "Amahs Kitchen authentic African cuisine in Massachusetts",
+        alt: "Freshly prepared puff-puff from Amahs Kitchen",
       },
     ],
   },
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Amahs Kitchen | Authentic African Cuisine",
     description: siteConfig.description,
-    images: ["/images/amahs-kitchen-social-card.jpg"],
+    images: ["/images/amahs-kitchen-social-food.jpg"],
   },
   robots: {
     index: true,

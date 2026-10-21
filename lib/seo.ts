@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { Category, MenuItem, Video } from "@/lib/types";
 import { siteConfig } from "@/lib/site-config";
 
-const socialImagePath = "/images/amahs-kitchen-social-card.jpg";
+const socialImagePath = "/images/amahs-kitchen-social-food.jpg";
 const cuisineTypes = ["African"];
 const serviceDays = [
   "Tuesday",
@@ -64,7 +64,7 @@ function socialImage() {
     url: socialImagePath,
     width: 1200,
     height: 630,
-    alt: "Amahs Kitchen authentic African cuisine in Massachusetts",
+    alt: "Freshly prepared puff-puff from Amahs Kitchen",
   };
 }
 

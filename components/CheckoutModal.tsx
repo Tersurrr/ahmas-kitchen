@@ -177,7 +177,7 @@ export default function CheckoutModal({
                   onChange={(e) => setInstructions(e.target.value)}
                   rows={3}
                   maxLength={500}
-                  className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
                   placeholder="Any allergies, spice preference, etc."
                 />
               </div>
@@ -251,7 +251,7 @@ function Field({
         placeholder={placeholder}
         required={required}
         maxLength={type === "tel" ? 30 : 100}
-        className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+        className="w-full rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
       />
     </div>
   );

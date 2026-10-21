@@ -4,7 +4,7 @@ export default function BusinessOverview() {
   return (
     <section
       aria-labelledby="business-overview-title"
-      className="mx-auto max-w-container-max px-4 py-12 md:px-gutter md:py-16"
+      className="mx-auto max-w-container-max px-4 pt-12 pb-8 md:px-gutter md:pt-16 md:pb-12"
     >
       <div className="rounded-2xl bg-white p-6 shadow-soft md:p-10">
         <div className="max-w-3xl">

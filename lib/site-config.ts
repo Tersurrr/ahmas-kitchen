@@ -52,7 +52,7 @@ export function restaurantJsonLd() {
     description: business.description,
     url: business.url,
     logo: `${business.url}/images/amahs-kitchen-logo.webp`,
-    image: `${business.url}/images/amahs-kitchen-logo.webp`,
+    image: `${business.url}/images/amahs-kitchen-social-food.jpg`,
     telephone: business.phone,
     email: business.email,
     menu: `${business.url}/menu`,
