@@ -72,7 +72,7 @@ create or replace function public.create_public_order(
   p_special_instructions text,
   p_items jsonb
 )
-returns jsonb
+returns json
 language plpgsql
 security definer
 set search_path = public, pg_temp
@@ -223,7 +223,7 @@ begin
     'id', v_order_id,
     'total', v_total,
     'items', v_lines
-  );
+  )::json;
 end;
 $$;
 
