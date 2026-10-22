@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, UtensilsCrossed, PlayCircle, Info } from "lucide-react";
+import { Home, BookOpen, Clapperboard, ChefHat } from "lucide-react";
 import clsx from "clsx";
 
 const items = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/menu", label: "Menu", icon: UtensilsCrossed },
-  { href: "/videos", label: "Videos", icon: PlayCircle },
-  { href: "/#about", label: "About", icon: Info },
+  { href: "/menu", label: "Menu", icon: BookOpen },
+  { href: "/videos", label: "Videos", icon: Clapperboard },
+  { href: "/#about", label: "About", icon: ChefHat },
 ];
 
 export default function BottomNav() {
@@ -32,7 +32,7 @@ export default function BottomNav() {
                 active ? "bg-primary-container text-on-primary-container" : "text-on-surface-variant"
               )}
             >
-              <Icon size={20} />
+              <Icon size={21} strokeWidth={1.8} aria-hidden="true" />
               <span className="text-[12px] font-medium">{label}</span>
             </Link>
           );
