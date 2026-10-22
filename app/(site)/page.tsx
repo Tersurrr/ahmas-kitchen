@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Hero from "@/components/Hero";
 import BusinessOverview from "@/components/BusinessOverview";
 import HomeMenu from "@/components/HomeMenu";
-import HowItWorks from "@/components/HowItWorks";
 import VideosPreview from "@/components/VideosPreview";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
@@ -75,7 +74,6 @@ export default async function HomePage() {
       <BusinessOverview />
       <div className="cabinet-content">
         <HomeMenu sections={homeSections} />
-        <HowItWorks />
         <VideosPreview videos={videos.slice(0, 3)} />
         <AboutSection />
         <Footer />
