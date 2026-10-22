@@ -119,8 +119,13 @@ export async function POST(request: Request) {
 
   let signInError: unknown;
   try {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     signInError = error;
+    if (!error && data.user?.app_metadata?.role !== "admin") {
+      return noStore(403, {
+        error: "This account does not have admin access. Contact the site owner for access.",
+      });
+    }
   } catch {
     return noStore(503, { error: "Sign-in is temporarily unavailable. Please try again shortly." });
   }
