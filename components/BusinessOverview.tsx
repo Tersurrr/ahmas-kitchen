@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function BusinessOverview() {
@@ -6,29 +7,36 @@ export default function BusinessOverview() {
       aria-labelledby="business-overview-title"
       className="mx-auto max-w-container-max px-4 pt-12 pb-8 md:px-gutter md:pt-16 md:pb-12"
     >
-      <div className="rounded-2xl bg-white p-6 shadow-soft md:p-10">
-        <div className="max-w-3xl">
-          <span className="text-sm font-bold uppercase tracking-widest text-secondary">
+      <div className="relative isolate flex min-h-[26rem] items-center overflow-hidden rounded-2xl bg-primary shadow-soft md:min-h-[24rem]">
+        <Image
+          src="/images/amahs-kitchen-social-food.jpg"
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="(max-width: 768px) calc(100vw - 2rem), 1200px"
+          className="-z-20 object-cover object-[65%_50%]"
+        />
+        <div className="absolute inset-0 -z-10 bg-primary/80 md:bg-gradient-to-r md:from-primary md:via-primary/90 md:to-primary/15" />
+
+        <div className="relative z-10 max-w-3xl px-6 py-12 sm:px-10 md:px-14 md:py-14">
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-secondary-container">
             Business overview
           </span>
           <h2
             id="business-overview-title"
-            className="mt-3 font-display text-3xl font-bold text-primary md:text-4xl"
+            className="mt-3 font-display text-3xl font-bold leading-tight text-white md:text-5xl"
           >
             Amahs Kitchen at a glance
           </h2>
-          <p className="mt-4 leading-relaxed text-on-surface-variant">
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/90 md:text-lg">
             Amahs Kitchen is a registered Massachusetts food business serving authentic
             African cuisine for everyday meals and special occasions. Customers can browse
             the menu online, choose pickup or delivery, and send their order directly to
             the kitchen through WhatsApp.
           </p>
-        </div>
-
-        <div className="mt-7">
           <Link
             href="/menu"
-            className="inline-flex items-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-dark"
+            className="mt-7 inline-flex items-center rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-on-secondary transition-colors hover:bg-secondary-dark"
           >
             Browse the menu
           </Link>
