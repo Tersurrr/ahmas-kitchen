@@ -9,14 +9,14 @@ export default function BusinessOverview() {
     >
       <div className="relative isolate flex min-h-[26rem] items-center overflow-hidden rounded-2xl bg-primary shadow-soft md:min-h-[24rem]">
         <Image
-          src="/images/amahs-kitchen-social-food.jpg"
+          src="/images/business-overview-food.webp"
           alt=""
           aria-hidden="true"
           fill
           sizes="(max-width: 768px) calc(100vw - 2rem), 1200px"
           className="-z-20 object-cover object-[65%_50%]"
         />
-        <div className="absolute inset-0 -z-10 bg-primary/80 md:bg-gradient-to-r md:from-primary md:via-primary/90 md:to-primary/15" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/40 md:from-primary/95 md:via-primary/65 md:to-primary/15" />
 
         <div className="relative z-10 max-w-3xl px-6 py-12 sm:px-10 md:px-14 md:py-14">
           <span className="text-sm font-bold uppercase tracking-[0.18em] text-secondary-container">
