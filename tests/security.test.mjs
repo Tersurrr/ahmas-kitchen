@@ -199,6 +199,15 @@ test("checkout no longer collects a phone number or preferred date or time", asy
   assert.doesNotMatch(howItWorks, /phone number/i);
 });
 
+test("checkout navigates to WhatsApp in the current tab without opening a blank tab", async () => {
+  const checkout = await readFile(
+    new URL("../components/CheckoutModal.tsx", import.meta.url),
+    "utf8"
+  );
+  assert.doesNotMatch(checkout, /window\.open\(["']about:blank/);
+  assert.match(checkout, /window\.location\.assign\(url\)/);
+});
+
 test("the full menu page uses the homepage menu font scope", async () => {
   const menuPage = await readFile(new URL("../app/(site)/menu/page.tsx", import.meta.url), "utf8");
   assert.match(menuPage, /className="cabinet-content"/);

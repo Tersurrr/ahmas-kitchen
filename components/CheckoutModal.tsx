@@ -48,8 +48,6 @@ export default function CheckoutModal({
       return;
     }
 
-    const whatsappWindow = window.open("about:blank", "_blank");
-    if (whatsappWindow) whatsappWindow.opener = null;
     setSubmitting(true);
     setError("");
 
@@ -81,21 +79,15 @@ export default function CheckoutModal({
       const result = (await response.json().catch(() => ({}))) as OrderResponse;
 
       if (!response.ok || !result.order) {
-        whatsappWindow?.close();
         setError(result.error || "We couldn't confirm the order. Please try again.");
         return;
       }
 
       const url = getWhatsAppOrderUrl(details, result.order.items, result.order.id);
-      if (whatsappWindow) {
-        whatsappWindow.location.replace(url);
-      } else {
-        window.location.assign(url);
-      }
       clear();
       onClose();
+      window.location.assign(url);
     } catch (requestError) {
-      whatsappWindow?.close();
       setError(
         requestError instanceof DOMException && requestError.name === "AbortError"
           ? "The order request timed out. Please check your connection and try again."
