@@ -34,7 +34,7 @@ export default function Hero() {
             <h1
               className="font-display text-4xl md:text-6xl font-bold text-white max-w-3xl leading-[1.18] drop-shadow-[0_3px_10px_rgba(0,0,0,0.65)] sm:leading-tight sm:drop-shadow-none"
             >
-              Authentic African Cuisine, Freshly Prepared
+              An Authentic African Cuisine
             </h1>
             <p
               className="mt-5 text-white/90 text-lg max-w-xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:mt-6 sm:drop-shadow-none"
