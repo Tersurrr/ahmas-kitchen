@@ -178,7 +178,7 @@ export function siteStructuredData() {
         currenciesAccepted: "USD",
         paymentAccepted: "Cash App, Zelle, Stripe, Apple Pay",
         servesCuisine: cuisineTypes,
-        slogan: "An Authentic African Cuisine",
+        slogan: "Authentic African Cuisine, Freshly Prepared",
         knowsAbout: [
           "African cuisine",
           "African catering",
