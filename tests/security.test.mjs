@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { escapeCsvCell, toCsv } from "../lib/csv.ts";
 import { validateOrderRequest } from "../lib/order-validation.ts";
+import { clientAddress } from "../lib/client-address.ts";
 import { buildWhatsAppMessage } from "../lib/whatsapp.ts";
 
 const validRequest = {
@@ -80,6 +81,25 @@ test("delivery orders do not require a customer phone number", () => {
   assert.equal(result.ok, true);
   if (result.ok) assert.equal(result.value.phone, null);
   assert.equal(validateOrderRequest({ ...validRequest, phone: "not a number" }).ok, false);
+});
+
+test("Netlify order rate limiting uses its client IP header without a NETLIFY env var", () => {
+  const originalNetlify = process.env.NETLIFY;
+  const originalVercel = process.env.VERCEL;
+  delete process.env.NETLIFY;
+  delete process.env.VERCEL;
+
+  try {
+    const request = new Request("https://amahskitchen.com/api/orders", {
+      headers: { "x-nf-client-connection-ip": "203.0.113.42" },
+    });
+    assert.equal(clientAddress(request), "203.0.113.42");
+  } finally {
+    if (originalNetlify === undefined) delete process.env.NETLIFY;
+    else process.env.NETLIFY = originalNetlify;
+    if (originalVercel === undefined) delete process.env.VERCEL;
+    else process.env.VERCEL = originalVercel;
+  }
 });
 
 test("CSV cells neutralize spreadsheet formulas and preserve quoting", () => {

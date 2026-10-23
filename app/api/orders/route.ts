@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { clientAddress } from "@/lib/client-address";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { validateOrderRequest } from "@/lib/order-validation";
 import type { CartItem } from "@/lib/types";
@@ -20,12 +21,6 @@ function noStore(status: number, body: Record<string, unknown>, retryAfter?: num
   const headers = new Headers({ "Cache-Control": "no-store" });
   if (retryAfter) headers.set("Retry-After", String(retryAfter));
   return NextResponse.json(body, { status, headers });
-}
-
-function clientAddress(request: Request) {
-  const isManagedPlatform = process.env.VERCEL === "1" || process.env.NETLIFY === "true";
-  if (!isManagedPlatform) return null;
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
 }
 
 function hasSameOrigin(request: Request) {
@@ -74,7 +69,7 @@ export async function POST(request: Request) {
       "consume_public_order_rate_limit",
       {
         p_phone: parsed.value.phone,
-      p_ip: clientAddress(request),
+        p_ip: clientAddress(request),
       }
     );
     const limit = (Array.isArray(limitData) ? limitData[0] : limitData) as
