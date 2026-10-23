@@ -5,9 +5,9 @@ export default function BusinessOverview() {
   return (
     <section
       aria-labelledby="business-overview-title"
-      className="mx-auto max-w-container-max px-4 pt-12 pb-8 md:px-gutter md:pt-16 md:pb-12"
+      className="mx-auto max-w-container-max px-4 pt-8 pb-6 md:px-gutter md:pt-10 md:pb-8"
     >
-      <div className="relative isolate flex min-h-[26rem] items-center overflow-hidden rounded-2xl bg-primary shadow-soft md:min-h-[24rem]">
+      <div className="relative isolate flex min-h-[23rem] items-center overflow-hidden rounded-2xl bg-primary shadow-soft md:min-h-[20rem]">
         <div className="absolute inset-0 -z-20 md:left-auto md:w-1/2">
           <Image
             src="/images/business-overview-food.webp"
@@ -18,9 +18,9 @@ export default function BusinessOverview() {
             className="object-cover object-[center_56%]"
           />
         </div>
-        <div className="absolute inset-0 -z-10 bg-primary/75 md:bg-gradient-to-r md:from-primary md:via-primary/95 md:via-[62%] md:to-transparent" />
+        <div className="absolute inset-0 -z-10 bg-primary/65 md:bg-gradient-to-r md:from-primary md:via-primary/80 md:via-[50%] md:to-transparent" />
 
-        <div className="relative z-10 max-w-3xl px-6 py-12 sm:px-10 md:px-14 md:py-14">
+        <div className="relative z-10 max-w-3xl px-6 py-10 sm:px-10 md:px-14 md:py-10">
           <span className="text-sm font-bold uppercase tracking-[0.18em] text-secondary-container">
             Business overview
           </span>
