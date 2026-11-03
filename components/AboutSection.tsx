@@ -1,15 +1,6 @@
 import Image from "next/image";
-import { Sparkles, Leaf, ChefHat, HeartHandshake, Check } from "lucide-react";
+import { Sparkles, Leaf, ChefHat, HeartHandshake } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
-
-const checklist = [
-  "Traditional African flavors, prepared with care",
-  "Fresh ingredients in every meal",
-  "Convenient pickup and delivery options",
-  "Catering for birthdays, weddings, and special occasions",
-  "Generous portions with consistent quality",
-  "Friendly, reliable customer service",
-];
 
 const features = [
   { icon: Sparkles, title: "Premium, Fresh Ingredients" },
@@ -50,16 +41,6 @@ export default function AboutSection() {
             special celebrations, we strive to create a memorable dining experience for every
             customer.
           </p>
-          <ul className="mt-6 space-y-3">
-            {checklist.map((item) => (
-              <li key={item} className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary/10">
-                  <Check className="text-secondary" size={14} strokeWidth={2.5} />
-                </span>
-                <span className="text-on-surface-variant leading-relaxed">{item}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 
