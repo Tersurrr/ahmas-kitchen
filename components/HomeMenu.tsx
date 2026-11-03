@@ -55,7 +55,7 @@ export default function HomeMenu({ sections }: { sections: HomeMenuSection[] }) 
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 xl:grid-cols-3">
             {sections.map(({ category, items: categoryItems }) => (
-              <section key={category.id} aria-labelledby={`home-category-${category.id}`} className="rounded-2xl bg-white p-4 shadow-soft md:p-5">
+              <section key={category.id} aria-labelledby={`home-category-${category.id}`} className="rounded-lg bg-surface p-4 shadow-soft md:p-5">
                 <div className="mb-3 flex items-center gap-3">
                   <h3 id={`home-category-${category.id}`} className="font-display text-[22px] font-bold text-primary md:text-2xl">{category.name}</h3>
                   <span className="h-px flex-1 bg-secondary/40" />

@@ -19,7 +19,7 @@ export default function Header() {
   const openCart = useCart((s) => s.openCart);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 pointer-events-auto shadow-sm bg-surface/95 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 pointer-events-auto border-b border-outline-variant/40 bg-surface">
       <div className="flex justify-between items-center h-16 px-4 md:px-gutter max-w-container-max mx-auto">
         <div className="flex items-center md:w-24">
           <button

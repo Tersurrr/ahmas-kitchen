@@ -109,11 +109,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable} ${cormorant.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
-      </head>
-      <body className="font-body bg-background text-on-surface heritage-pattern antialiased">
+      <body className="font-body bg-background text-on-surface antialiased">
         {children}
       </body>
     </html>
