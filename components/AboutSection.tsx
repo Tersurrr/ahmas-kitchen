@@ -50,19 +50,16 @@ export default function AboutSection() {
           Why Choose Amahs kitchen
         </h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {features.map((f, i) => (
-          <div
-            key={f.title}
-            className={`flex flex-col items-center text-center px-6 py-4 ${
-              i > 0 ? "sm:border-l border-outline-variant/30" : ""
-            } ${i === 2 ? "border-l-0 lg:border-l" : ""}`}
-          >
-            <f.icon className="text-secondary mb-4" size={30} strokeWidth={1.5} />
-            <p className="font-display font-semibold text-primary">{f.title}</p>
-          </div>
+      <ul className="mx-auto max-w-2xl divide-y divide-outline-variant/30 border-y border-outline-variant/30 px-4">
+        {features.map((feature) => (
+          <li key={feature.title} className="flex items-center gap-4 py-4 sm:py-5">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary/10">
+              <feature.icon className="text-secondary" size={21} strokeWidth={1.7} />
+            </span>
+            <span className="font-display font-semibold text-primary">{feature.title}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
