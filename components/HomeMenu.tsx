@@ -57,17 +57,17 @@ export default function HomeMenu({ sections }: { sections: HomeMenuSection[] }) 
             {sections.map(({ category, items: categoryItems }) => (
               <section key={category.id} aria-labelledby={`home-category-${category.id}`} className="rounded-2xl bg-white p-4 shadow-soft md:p-5">
                 <div className="mb-3 flex items-center gap-3">
-                  <h3 id={`home-category-${category.id}`} className="font-display text-xl font-bold text-primary md:text-2xl">{category.name}</h3>
+                  <h3 id={`home-category-${category.id}`} className="font-display text-[22px] font-bold text-primary md:text-2xl">{category.name}</h3>
                   <span className="h-px flex-1 bg-secondary/40" />
                 </div>
                 <ul className="divide-y divide-outline-variant/25">
                   {categoryItems.slice(0, 3).map((item) => (
                     <li key={item.id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 py-3 first:pt-1 last:pb-1 md:gap-2.5">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-primary md:text-base">{item.name}</p>
-                        {item.description && <p className="mt-0.5 truncate text-xs text-on-surface-variant">{item.description}</p>}
+                        <p className="text-base font-semibold text-primary">{item.name}</p>
+                        {item.description && <p className="mt-0.5 truncate text-[13px] text-on-surface-variant md:text-xs">{item.description}</p>}
                       </div>
-                      <span className="shrink-0 whitespace-nowrap text-sm font-semibold text-primary md:text-base">{formatCurrency(getDisplayPrice(item))}</span>
+                      <span className="shrink-0 whitespace-nowrap text-base font-semibold text-primary">{formatCurrency(getDisplayPrice(item))}</span>
                       <button
                         type="button"
                         disabled={!item.is_available}
