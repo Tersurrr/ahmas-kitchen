@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Amahs Fragrance & Perfume — Coming Soon",
-  description: "A collection that speaks class and leaves a lasting impression. Amahs Fragrance & Perfume is coming soon.",
+  title: "Amahs Fragrance & Perfume | A New Scent Story",
+  description: "Discover the Amahs Fragrance & Perfume collection, available for pickup and delivery in Dracut, Massachusetts.",
 };
 
-export default function PerfumeComingSoonPage() {
+export default function PerfumeCampaignPage() {
   return (
-    <main className="perfume-coming-soon">
+    <main className="perfume-page">
       <Image
-        src="/images/amahs-fragrance-coming-soon.jpg"
-        alt="Amahs Fragrance & Perfume is coming soon. Pickup and delivery available. Visit amahskitchen.com/perfume, call +1 (857) 261-5923, or visit us in Dracut, Massachusetts."
-        width={853}
-        height={1280}
+        src="/images/amahs-fragrance-campaign.png"
+        alt="Amahs Fragrance & Perfume campaign featuring a model and Cranford perfume collection, with pickup, delivery, and contact details."
+        width={483}
+        height={730}
         priority
-        sizes="(max-width: 853px) 100vw, 853px"
-        className="perfume-coming-soon-poster"
+        sizes="(max-width: 640px) 100vw, 700px"
+        className="perfume-page-poster"
       />
     </main>
   );

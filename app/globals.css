@@ -76,8 +76,8 @@ body {
   }
 }
 
-/* Let the coming-soon poster use the full phone width without cropping. */
-.perfume-coming-soon {
+/* Keep the perfume campaign poster readable on phones without cropping. */
+.perfume-page {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -85,22 +85,21 @@ body {
   min-height: 100svh;
   place-items: center;
   overflow: auto;
-  background: #fff4df;
+  background: #0c0c00;
 }
 
-.perfume-coming-soon-poster {
+.perfume-page-poster {
   display: block;
   width: auto;
-  height: auto;
+  height: min(100svh, 1200px);
   max-width: 100%;
-  max-height: 100svh;
   object-fit: contain;
 }
 
 @media (max-width: 640px) {
-  .perfume-coming-soon-poster {
+  .perfume-page-poster {
     width: 100vw;
     max-width: none;
-    max-height: none;
+    height: auto;
   }
 }
