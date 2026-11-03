@@ -24,8 +24,8 @@ export default function AboutSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
         <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-soft heritage-frame">
           <Image
-            src="https://images.unsplash.com/photo-1583224964978-2257b960c3d3?q=80&w=1200&auto=format&fit=crop"
-            alt="Freshly prepared African dishes served by Amahs Kitchen"
+            src="/images/business-overview-food.webp"
+            alt="A freshly prepared bowl of African beef stew with greens and peppers"
             fill
             quality={80}
             sizes="(max-width: 768px) 100vw, 50vw"
