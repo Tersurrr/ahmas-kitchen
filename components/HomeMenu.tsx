@@ -7,7 +7,6 @@ import { formatCurrency } from "@/lib/whatsapp";
 import { getDefaultOption, getDisplayPrice, requiresOptionSelection } from "@/lib/menu-options";
 import { useCart } from "@/store/cart";
 import FoodModal from "./FoodModal";
-import MenuCard from "./MenuCard";
 
 type HomeMenuSection = { category: Category; items: MenuItem[] };
 
@@ -54,48 +53,27 @@ export default function HomeMenu({ sections }: { sections: HomeMenuSection[] }) 
 
       {hasItems && (
         <>
-          <div className="space-y-8 md:hidden">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 xl:grid-cols-3">
             {sections.map(({ category, items: categoryItems }) => (
-              <section key={category.id} aria-labelledby={`home-category-mobile-${category.id}`}>
-                <div className="mb-4 flex items-center gap-3">
-                  <h3
-                    id={`home-category-mobile-${category.id}`}
-                    className="font-display text-2xl font-bold text-primary"
-                  >
-                    {category.name}
-                  </h3>
-                  <span className="h-px flex-1 bg-secondary/40" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {categoryItems.slice(0, 4).map((item) => (
-                    <MenuCard key={item.id} item={item} />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-
-          <div className="hidden gap-8 md:grid md:grid-cols-2 xl:grid-cols-3">
-            {sections.map(({ category, items: categoryItems }) => (
-              <section key={category.id} aria-labelledby={`home-category-${category.id}`} className="rounded-xl bg-white p-5 shadow-soft">
+              <section key={category.id} aria-labelledby={`home-category-${category.id}`} className="rounded-2xl bg-white p-4 shadow-soft md:p-5">
                 <div className="mb-3 flex items-center gap-3">
-                  <h3 id={`home-category-${category.id}`} className="font-display text-2xl font-bold text-primary">{category.name}</h3>
+                  <h3 id={`home-category-${category.id}`} className="font-display text-xl font-bold text-primary md:text-2xl">{category.name}</h3>
                   <span className="h-px flex-1 bg-secondary/40" />
                 </div>
                 <ul className="divide-y divide-outline-variant/25">
                   {categoryItems.slice(0, 3).map((item) => (
-                    <li key={item.id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 py-3 first:pt-1 last:pb-1">
+                    <li key={item.id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 py-3 first:pt-1 last:pb-1 md:gap-2.5">
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-primary">{item.name}</p>
+                        <p className="text-sm font-semibold text-primary md:text-base">{item.name}</p>
                         {item.description && <p className="mt-0.5 truncate text-xs text-on-surface-variant">{item.description}</p>}
                       </div>
-                      <span className="shrink-0 whitespace-nowrap font-semibold text-primary">{formatCurrency(getDisplayPrice(item))}</span>
+                      <span className="shrink-0 whitespace-nowrap text-sm font-semibold text-primary md:text-base">{formatCurrency(getDisplayPrice(item))}</span>
                       <button
                         type="button"
                         disabled={!item.is_available}
                         aria-label={`Add ${item.name} to cart`}
-                        onClick={() => quickAdd(item)}
-                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-lg font-bold leading-none text-on-secondary transition-colors hover:bg-secondary-dark disabled:cursor-not-allowed disabled:bg-surface-container-high disabled:text-on-surface-variant"
+                        onClick={() => item.is_available && quickAdd(item)}
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-secondary text-lg font-bold leading-none text-on-secondary transition-colors hover:bg-secondary-dark disabled:cursor-not-allowed disabled:bg-surface-container-high disabled:text-on-surface-variant"
                       >
                         {item.is_available ? "+" : "—"}
                       </button>
