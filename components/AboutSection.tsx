@@ -13,7 +13,7 @@ export default function AboutSection() {
   return (
     <section id="about" className="scroll-mt-16 py-section-gap px-4 md:px-gutter max-w-container-max mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-outline-variant/40 shadow-soft">
+        <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-soft heritage-frame">
           <Image
             src="/images/business-overview-food.webp"
             alt="A freshly prepared bowl of African beef stew with greens and peppers"
@@ -32,9 +32,14 @@ export default function AboutSection() {
             </span>
           </h2>
           <p className="text-on-surface-variant leading-relaxed">
-            {siteConfig.ownerName ? `Founded by ${siteConfig.ownerName}, Amahs Kitchen` : "Amahs Kitchen"} serves
-            African dishes for pickup, delivery, and catering in Massachusetts. Browse the menu
-            to order, or contact us about an event.
+            {siteConfig.ownerName
+              ? `Founded and operated by ${siteConfig.ownerName}, Amahs Kitchen is dedicated`
+              : "Amahs Kitchen is dedicated"}{" "}
+            to sharing the rich taste of African cuisine through
+            carefully prepared meals made with quality ingredients. Every dish reflects our
+            commitment to freshness, consistency, and exceptional service. From everyday meals to
+            special celebrations, we strive to create a memorable dining experience for every
+            customer.
           </p>
         </div>
       </div>
@@ -48,8 +53,8 @@ export default function AboutSection() {
       <ul className="mx-auto max-w-2xl divide-y divide-outline-variant/30 border-y border-outline-variant/30 px-4">
         {features.map((feature) => (
           <li key={feature.title} className="flex items-center gap-4 py-4 sm:py-5">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-moss-green/10">
-              <feature.icon className="text-moss-green" size={21} strokeWidth={1.7} />
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary/10">
+              <feature.icon className="text-secondary" size={21} strokeWidth={1.7} />
             </span>
             <span className="font-display font-semibold text-primary">{feature.title}</span>
           </li>

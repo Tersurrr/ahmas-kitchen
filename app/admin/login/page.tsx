@@ -41,7 +41,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-surface-container-low">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-surface-container-low heritage-pattern">
       <div className="w-full max-w-sm bg-white rounded-xl shadow-modal p-8">
         <div className="flex flex-col items-center mb-6">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">

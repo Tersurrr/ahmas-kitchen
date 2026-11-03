@@ -6,7 +6,7 @@ export default function VideosPreview({ videos }: { videos: Video[] }) {
   const hasVideos = videos.length > 0;
 
   return (
-    <section className={`${hasVideos ? "py-section-gap" : "py-12 md:py-16"} px-4 md:px-gutter max-w-container-max mx-auto`}>
+    <section className={`${hasVideos ? "py-section-gap" : "py-12 md:py-16"} px-4 md:px-gutter max-w-container-max mx-auto bg-surface-container-low/50 rounded-3xl`}>
       <div className={`${hasVideos ? "mb-10" : ""} flex items-end justify-between gap-4 px-4 pt-4`}>
         <div>
           <span className="text-sm font-bold tracking-widest uppercase text-secondary">From the Kitchen</span>

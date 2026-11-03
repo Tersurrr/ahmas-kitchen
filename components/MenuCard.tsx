@@ -52,7 +52,7 @@ export default function MenuCard({ item }: { item: MenuItem }) {
             openModal();
           }
         }}
-        className="group text-left bg-surface rounded-lg shadow-soft overflow-hidden hover:shadow-modal transition-shadow flex flex-col cursor-pointer"
+        className="group text-left bg-white rounded-xl shadow-soft overflow-hidden hover:shadow-modal transition-shadow flex flex-col cursor-pointer"
       >
         {image && (
           <div className="relative aspect-[4/3] bg-surface-container-high overflow-hidden">
