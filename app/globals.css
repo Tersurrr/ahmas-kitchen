@@ -81,25 +81,63 @@ body {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: grid;
-  min-height: 100svh;
-  place-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100svh;
   overflow: auto;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
   background: #0c0c00;
+}
+
+.perfume-coming-soon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding: 9px 15px;
+  border: 1px solid #b39f84;
+  border-radius: 999px;
+  color: #f3d899;
+  font: 700 12px/1 Arial, sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.perfume-coming-soon-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #b39f84;
+  box-shadow: 0 0 10px rgb(179 159 132 / 55%);
 }
 
 .perfume-page-poster {
   display: block;
   width: auto;
-  height: min(100svh, 1200px);
+  height: min(
+    calc(
+      100svh - 46px - max(12px, env(safe-area-inset-top)) -
+        max(12px, env(safe-area-inset-bottom))
+    ),
+    1200px
+  );
   max-width: 100%;
   object-fit: contain;
 }
 
 @media (max-width: 640px) {
   .perfume-page-poster {
-    width: 100vw;
-    max-width: none;
+    width: auto;
     height: auto;
+    max-width: 100%;
+    max-height: calc(
+      100svh - 46px - max(12px, env(safe-area-inset-top)) -
+        max(12px, env(safe-area-inset-bottom))
+    );
   }
 }
