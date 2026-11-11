@@ -25,8 +25,10 @@ export default function VideosPreview({ videos }: { videos: Video[] }) {
 
       {hasVideos && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pb-4">
-          {videos.map((v) => (
-            <VideoCard key={v.id} video={v} />
+          {videos.map((v, index) => (
+            <div key={v.id} className={index === 0 ? undefined : "hidden sm:block"}>
+              <VideoCard video={v} />
+            </div>
           ))}
         </div>
       )}
